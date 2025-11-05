@@ -1,0 +1,190 @@
+
+using System.Security.Cryptography;
+using Mapster;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+
+// "email": "ahm4444l@gmail.com",
+//   "type": "Carpenter",
+//   "password": "klFFo##145"
+
+public class AuthService : IAuth
+{
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IEmailSender _emailSender;
+    private readonly IjwtProvider _jwtProvider;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly int _Otpxpiryminit = 15;
+    private readonly int _refreshTokenExpiryDays = 14;
+
+    public AuthService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender, IjwtProvider jwtProvider, SignInManager<ApplicationUser> signInManager)
+    {
+        _context = context;
+        _userManager = userManager;
+        _emailSender = emailSender;
+        _jwtProvider = jwtProvider;
+        _signInManager = signInManager;
+    }
+
+    public async Task<Result<AuthRespond>> GetToken(string Email, string Password, CancellationToken cancellationToken)
+    {
+        if (await _userManager.FindByEmailAsync(Email) is not { } user)
+        {
+            return Result.failure<AuthRespond>(UserErrors.InvalidCredentials);
+        }
+        var result = await _signInManager.PasswordSignInAsync(user, Password, false, false);
+
+        if (result.Succeeded)
+        {
+            var response = await AddTokenAndRefresh(user, cancellationToken);
+            return Result.Success(response);
+        }
+        return Result.failure<AuthRespond>(result.IsNotAllowed ? UserErrors.EmailNotConfirmed : UserErrors.InvalidCredentials);
+
+    }
+
+
+    public async Task<Result<AuthRespond>> GetRefreshToken(string token, string refreshToken, CancellationToken cancellationToken)
+    {
+        var userId = _jwtProvider.ValidateToken(token);
+        if (userId is null)
+            return Result.failure<AuthRespond>(UserErrors.InvalidJwtToken);
+            
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+            return Result.failure<AuthRespond>(UserErrors.InvalidCredentials);
+
+        var userRefreshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
+        if (userRefreshToken is null)
+            return Result.failure<AuthRespond>(UserErrors.InvalidRefreshToken);
+
+        userRefreshToken.RevokedOn = DateTime.UtcNow;
+        var response = await AddTokenAndRefresh(user, cancellationToken);
+
+        return Result.Success(response);
+    }
+
+
+    public async Task<Result> Register(RegisterRequest request, CancellationToken cancellationToken)
+    {
+
+        if (!Enum.TryParse<UserType>(request.Type, true, out var userType))
+            return Result.failure(UserErrors.InvalidRole);
+
+        if (userType != UserType.Client && userType != UserType.Carpenter)
+            return Result.failure(UserErrors.InvalidRole);
+        var emailIsExists = await _userManager.Users.AnyAsync(x => x.Email == request.Email, cancellationToken);
+        if (emailIsExists)
+            return Result.failure(UserErrors.DuplicatedEmail);
+
+        var user = request.Adapt<ApplicationUser>();
+        var result = await _userManager.CreateAsync(user, request.Password);
+        if (result.Succeeded)
+        {
+            var (uid, encrypted, expireotp) = geterate_rand_expireotp();
+            user.otps.Add(
+                new Otp
+                {
+                    Code = encrypted,
+                    ExpiresOn = expireotp,
+                    CreatedOn = DateTime.UtcNow
+                }
+            );
+            await _userManager.UpdateAsync(user);
+            var emailBody = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation",
+            new Dictionary<string, string>
+            {
+                {"--- APP NAME ---","Ecommerce"},
+                {"[User's Name]",$"{user.FirstName} {user.LastName}" },
+                {"123456",$"{uid}"},
+                {"next 15 minutes.",$"next {_Otpxpiryminit} minutes."},
+                { "[Your Company]","Woodia"}
+            });
+
+            await _emailSender.SendEmailAsync(user.Email!, "ShopApi", emailBody);
+            return Result.Success();
+
+        }
+        var error = result.Errors.First();
+        return Result.failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
+    }
+    public async Task<Result> ConfirmEmail(ConfirmEmailRequest request, CancellationToken cancellationToken)
+    {
+        if (await _userManager.FindByEmailAsync(request.Email) is not { } user)
+            return Result.failure(UserErrors.InvalidCode);
+
+        if (user.EmailConfirmed)
+            return Result.failure(UserErrors.DuplicatedConfirmation);
+
+
+        var Otp = user.otps.FirstOrDefault(x => x.IsActive);
+        if (Otp is null)
+            return Result.failure(UserErrors.InvalidCode);
+
+        var resultOtpConfirm = EncryptionHelper.Decrypt(Otp.Code) == request.Code;
+        if (!resultOtpConfirm)
+            return Result.failure(UserErrors.InvalidCode);
+
+        user.EmailConfirmed = true;
+        var result = await _userManager.UpdateAsync(user);
+
+        if (result.Succeeded)
+        {
+            var roleName = user.userType switch
+            {
+                UserType.Carpenter => DefaultRoles.Carpenter,
+                UserType.Client => DefaultRoles.Client,
+                _ => throw new InvalidOperationException("Invalid user type.")
+            };
+            await _userManager.AddToRoleAsync(user, roleName);
+            return Result.Success();
+        }
+        var error = result.Errors.First();
+        return Result.failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
+
+    }
+
+    private (int uid, string encrypted, DateTime expireotp) geterate_rand_expireotp()
+    {
+        var rand = new Random();
+        var uid = rand.Next(100000, 1000000);
+        string encrypted = EncryptionHelper.Encrypt(uid.ToString());
+        var expireotp = DateTime.UtcNow.AddMinutes(_Otpxpiryminit);
+        return (uid, encrypted, expireotp);
+    }
+
+    private async Task<AuthRespond> AddTokenAndRefresh(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        var (UserRoles, userPermissions) = await GetUserRolesAndPermission(user, cancellationToken);
+        var (token, expiresIn) = _jwtProvider.GenerateToken(user, UserRoles, userPermissions);
+        var refreshToken = GenerateRefreshToken();
+        var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpiryDays);
+
+        user.RefreshTokens.Add(new RefreshToken
+        {
+            Token = refreshToken,
+            ExpiresOn = refreshTokenExpiration
+        });
+        await _userManager.UpdateAsync(user);
+        return new AuthRespond(user.Id, user.Email, user.FirstName, user.LastName, user.userType, token, expiresIn, refreshToken, refreshTokenExpiration);
+    }
+
+    private static string GenerateRefreshToken()
+            => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+
+    private async Task<(IEnumerable<string> roles, IEnumerable<string> permissions)> GetUserRolesAndPermission(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        var UserRoles = await _userManager.GetRolesAsync(user);
+        var userPermissions = await (from r in _context.Roles
+                                     join p in _context.RoleClaims
+                                     on r.Id equals p.RoleId
+                                     where UserRoles.Contains(r.Name!)
+                                     select p.ClaimValue!)
+                                   .Distinct()
+                                   .ToListAsync(cancellationToken);
+        return (UserRoles, userPermissions);
+    }
+
+}
