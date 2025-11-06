@@ -22,9 +22,16 @@ public class EmailService(IOptions<SmtpSetting> smtpSettings) : IEmailSender
         };
         message.Body = builder.ToMessageBody();
         using var smtp = new SmtpClient();
-        smtp.Connect(_smtpSetting.Server, _smtpSetting.Port, SecureSocketOptions.StartTls);
-        smtp.Authenticate(_smtpSetting.Login, _smtpSetting.Password);
-        await smtp.SendAsync(message);
-        smtp.Disconnect(true);
+        try { 
+            await smtp.ConnectAsync(_smtpSetting.Server, _smtpSetting.Port, SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(_smtpSetting.Login, _smtpSetting.Password);
+            await smtp.SendAsync(message);
+            await smtp.DisconnectAsync(true);
+        }
+        catch (Exception ex)
+        {
+            // Log the error but don’t break registration
+            Console.WriteLine($"Failed to send email: {ex.Message}");
+        }
     }
 }
