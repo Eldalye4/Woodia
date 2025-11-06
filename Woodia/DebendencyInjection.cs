@@ -24,6 +24,7 @@ public static class DebendencyInjection
         services.AddScoped<IEmailSender, EmailService>();
         services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
         services.Configure<SmtpSetting>(configuration.GetSection(nameof(SmtpSetting)));
+        services.Configure<SendGridSetting>(configuration.GetSection(nameof(SendGridSetting)));
 
         var connectionstring = configuration.GetConnectionString("key");
 

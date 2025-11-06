@@ -4,33 +4,44 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
-public class EmailService(IOptions<SmtpSetting> smtpSettings) : IEmailSender
+public class EmailService(IOptions<SendGridSetting> SendGridSetting) : IEmailSender
 {
-    private readonly SmtpSetting _smtpSetting = smtpSettings.Value;
+    private readonly SendGridSetting _sendGridSettings = SendGridSetting.Value;
 
     public async Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Woodia", _smtpSetting.Mail));
-        message.Sender = new MailboxAddress("Woodia", _smtpSetting.Mail);
-        message.To.Add(MailboxAddress.Parse(email));
-        message.Subject = subject;
-        var builder = new BodyBuilder
+         try
         {
-            HtmlBody = htmlMessage
-        };
-        message.Body = builder.ToMessageBody();
-        using var smtp = new SmtpClient();
-        try { 
-            await smtp.ConnectAsync(_smtpSetting.Server, _smtpSetting.Port, SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(_smtpSetting.Login, _smtpSetting.Password);
-            await smtp.SendAsync(message);
-            await smtp.DisconnectAsync(true);
+            var client = new SendGridClient(_sendGridSettings.ApiKey);
+            
+            var from = new EmailAddress(_sendGridSettings.SenderEmail, _sendGridSettings.SenderName);
+            var to = new EmailAddress(email);
+            
+            var msg = MailHelper.CreateSingleEmail(
+                from, 
+                to, 
+                subject, 
+                plainTextContent: null,
+                htmlContent: htmlMessage
+            );
+
+            var response = await client.SendEmailAsync(msg);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Email sent successfully to: {email}");
+            }
+            else
+            {
+                var body = await response.Body.ReadAsStringAsync();
+                Console.WriteLine($"SendGrid failed: {response.StatusCode} - {body}");
+            }
         }
         catch (Exception ex)
         {
-            // Log the error but don’t break registration
             Console.WriteLine($"Failed to send email: {ex.Message}");
         }
     }

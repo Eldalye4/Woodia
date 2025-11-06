@@ -42,3 +42,9 @@ app.MapControllers();
 app.UseExceptionHandler();
 
 app.Run();
+
+
+// 3JV7BMH5QZXLKB2Z3FXZUKKN
+
+
+// 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

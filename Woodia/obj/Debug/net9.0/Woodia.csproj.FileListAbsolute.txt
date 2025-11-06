@@ -199,3 +199,5 @@
 /media/ahmed-eldaly/mydisk/1graduationproject/Woodia/obj/Debug/net9.0/Woodia.xml
 /media/ahmed-eldaly/mydisk/1graduationproject/Woodia/obj/Debug/net9.0/Woodia.sourcelink.json
 /media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/Templates/EmailConfirmation.html
+/media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/SendGrid.dll
+/media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/StarkbankEcdsa.dll
