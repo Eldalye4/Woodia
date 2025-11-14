@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -22,9 +23,22 @@ public static class DebendencyInjection
         services.AddScoped<IAuth, AuthService>();
         services.AddSingleton<IjwtProvider, JwtProvider>();
         services.AddScoped<IEmailSender, EmailService>();
+        services.AddScoped<EncryptionHelper>();
+
+        services.AddCors(Options => Options.AddDefaultPolicy(builder =>
+            builder.AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithOrigins(configuration.GetSection("AllowedOrigins").Get<string[]>()!)));
+
         services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
         services.Configure<SmtpSetting>(configuration.GetSection(nameof(SmtpSetting)));
         services.Configure<SendGridSetting>(configuration.GetSection(nameof(SendGridSetting)));
+        services.Configure<EncryptionSetting>(configuration.GetSection(nameof(EncryptionSetting)));
+        services.Configure<GoogleSettings>(configuration.GetSection(nameof(GoogleSettings)));
+        
+
+
+        services.AddHttpContextAccessor();
 
         var connectionstring = configuration.GetConnectionString("key");
 
@@ -56,11 +70,18 @@ public static class DebendencyInjection
                 });
 
                 // User API Documentation  
-                options.SwaggerDoc("user", new OpenApiInfo
+                options.SwaggerDoc("client", new OpenApiInfo
                 {
-                    Title = "User API",
+                    Title = "Client API",
                     Version = "v1",
-                    Description = "API endpoints for regular users"
+                    Description = "API endpoints for Client"
+                });
+
+                options.SwaggerDoc("carpenter", new OpenApiInfo
+                {
+                    Title = "Client API",
+                    Version = "v1",
+                    Description = "API endpoints for Client"
                 });
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -71,6 +92,16 @@ public static class DebendencyInjection
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
                     Description = "Add Token"
+                });
+
+                options.DocInclusionPredicate((groupName, apiDesc) =>
+                {
+                    var group = apiDesc.GroupName;
+
+                    if (group == "auth" && (groupName == "client" || groupName == "carpenter"))
+                        return true;
+
+                    return group == groupName;
                 });
 
                 // Global Security Requirement

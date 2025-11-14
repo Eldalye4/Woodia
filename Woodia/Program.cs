@@ -28,16 +28,23 @@ app.MapScalarApiReference("/scalar/admin", options =>
 });
 
 // User Documentation
-app.MapScalarApiReference("/scalar/store", options =>
+app.MapScalarApiReference("/scalar/client", options =>
 {
     options
         .WithTitle("User API Documentation")
        .WithTheme(ScalarTheme.Purple)
-        .WithOpenApiRoutePattern("/swagger/user/swagger.json");
+        .WithOpenApiRoutePattern("/swagger/client/swagger.json");
+});
+app.MapScalarApiReference("/scalar/carpenter", options =>
+{
+    options
+        .WithTitle("User API Documentation")
+       .WithTheme(ScalarTheme.Purple)
+        .WithOpenApiRoutePattern("/swagger/carpenter/swagger.json");
 });
 
-
-
+app.UseCors();
+app.UseAuthentication();
 app.MapControllers();
 app.UseExceptionHandler();
 

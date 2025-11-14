@@ -1,14 +1,16 @@
 using System.Security.Cryptography;
+using Microsoft.Extensions.Options;
 
-public static class EncryptionHelper
+public  class EncryptionHelper(IOptions<EncryptionSetting> options)
 {
-    private static readonly string EncryptionKey = GenerateRandomKey(256);
+    private readonly EncryptionSetting _options = options.Value;
+    
 
-    public static string Encrypt(string plainText)
+    public  string Encrypt(string plainText)
     {
         using (Aes aesAlg = Aes.Create())
         {
-            aesAlg.Key = Convert.FromBase64String(EncryptionKey);
+            aesAlg.Key = Convert.FromBase64String(_options.key);
             aesAlg.IV = GenerateRandomIV();
             aesAlg.Padding = PaddingMode.PKCS7;
 
@@ -28,13 +30,13 @@ public static class EncryptionHelper
         }
     }
 
-    public static string Decrypt(string cipherText)
+    public  string Decrypt(string cipherText)
     {
         byte[] cipherBytes = Convert.FromBase64String(cipherText);
 
         using (Aes aesAlg = Aes.Create())
         {
-            aesAlg.Key = Convert.FromBase64String(EncryptionKey);
+            aesAlg.Key = Convert.FromBase64String(_options.key);
             aesAlg.IV = cipherBytes.Take(16).ToArray();
             aesAlg.Padding = PaddingMode.PKCS7;
 

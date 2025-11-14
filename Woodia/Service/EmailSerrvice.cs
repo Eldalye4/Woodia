@@ -30,15 +30,7 @@ public class EmailService(IOptions<SendGridSetting> SendGridSetting) : IEmailSen
 
             var response = await client.SendEmailAsync(msg);
 
-            if (response.IsSuccessStatusCode)
-            {
-                Console.WriteLine($"Email sent successfully to: {email}");
-            }
-            else
-            {
-                var body = await response.Body.ReadAsStringAsync();
-                Console.WriteLine($"SendGrid failed: {response.StatusCode} - {body}");
-            }
+            
         }
         catch (Exception ex)
         {

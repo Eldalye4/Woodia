@@ -4,7 +4,7 @@ public record AuthRespond
     string? Email,
     string FirstName,
     string LastName,
-    UserType UserType,
+    string userType,
     string Token,
     int ExpiresIn,
     string RefreshToken,

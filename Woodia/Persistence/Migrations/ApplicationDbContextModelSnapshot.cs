@@ -312,6 +312,9 @@ namespace Woodia.Persistence.Migrations
                             b1.Property<DateTime>("ExpiresOn")
                                 .HasColumnType("datetime2");
 
+                            b1.Property<int>("otpType")
+                                .HasColumnType("int");
+
                             b1.HasKey("UserId", "Id");
 
                             b1.ToTable("Otps", (string)null);

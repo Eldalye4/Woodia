@@ -64,5 +64,17 @@
         <member name="M:Woodia.Persistence.Migrations.seeddata.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:Woodia.Persistence.Migrations.OtpType">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.OtpType.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.OtpType.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.OtpType.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

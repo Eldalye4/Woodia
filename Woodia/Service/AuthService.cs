@@ -1,32 +1,34 @@
 
 using System.Security.Cryptography;
+using Google.Apis.Auth;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+
 
 // "email": "ahm4444l@gmail.com",
 //   "type": "Carpenter",
 //   "password": "klFFo##145"
 
-public class AuthService : IAuth
+public class AuthService(ApplicationDbContext context, UserManager<ApplicationUser> userManager
+    , IEmailSender emailSender, IjwtProvider jwtProvider, SignInManager<ApplicationUser> signInManager,
+EncryptionHelper encryptionHelper, IHttpContextAccessor httpContextAccessor, IOptions<GoogleSettings> optionsGoogle, ILogger<AuthService> logger) : IAuth
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IEmailSender _emailSender;
-    private readonly IjwtProvider _jwtProvider;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ApplicationDbContext _context = context;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IEmailSender _emailSender = emailSender;
+    private readonly IjwtProvider _jwtProvider = jwtProvider;
+    private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+    private readonly EncryptionHelper _encryptionHelper = encryptionHelper;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    private readonly ILogger<AuthService> _logger = logger;
+    private readonly GoogleSettings _optionsGoogle = optionsGoogle.Value;
     private readonly int _Otpxpiryminit = 15;
     private readonly int _refreshTokenExpiryDays = 14;
-
-    public AuthService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender, IjwtProvider jwtProvider, SignInManager<ApplicationUser> signInManager)
-    {
-        _context = context;
-        _userManager = userManager;
-        _emailSender = emailSender;
-        _jwtProvider = jwtProvider;
-        _signInManager = signInManager;
-    }
 
     public async Task<Result<AuthRespond>> GetToken(string Email, string Password, CancellationToken cancellationToken)
     {
@@ -51,7 +53,7 @@ public class AuthService : IAuth
         var userId = _jwtProvider.ValidateToken(token);
         if (userId is null)
             return Result.failure<AuthRespond>(UserErrors.InvalidJwtToken);
-            
+
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
             return Result.failure<AuthRespond>(UserErrors.InvalidCredentials);
@@ -83,27 +85,19 @@ public class AuthService : IAuth
         var result = await _userManager.CreateAsync(user, request.Password);
         if (result.Succeeded)
         {
-            var (uid, encrypted, expireotp) = geterate_rand_expireotp();
+            var (uid, encrypted, expireotp) = GeterateRandExpireotp();
             user.otps.Add(
                 new Otp
                 {
                     Code = encrypted,
                     ExpiresOn = expireotp,
-                    CreatedOn = DateTime.UtcNow
+                    CreatedOn = DateTime.UtcNow,
+                    otpType = OtpType.ConfirmEmail
                 }
             );
             await _userManager.UpdateAsync(user);
-            var emailBody = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation",
-            new Dictionary<string, string>
-            {
-                {"--- APP NAME ---","Ecommerce"},
-                {"[User's Name]",$"{user.FirstName} {user.LastName}" },
-                {"123456",$"{uid}"},
-                {"next 15 minutes.",$"next {_Otpxpiryminit} minutes."},
-                { "[Your Company]","Woodia"}
-            });
 
-            await _emailSender.SendEmailAsync(user.Email!, "ShopApi", emailBody);
+            await SendConfirmationEmail(user, uid);
             return Result.Success();
 
         }
@@ -119,11 +113,15 @@ public class AuthService : IAuth
             return Result.failure(UserErrors.DuplicatedConfirmation);
 
 
-        var Otp = user.otps.FirstOrDefault(x => x.IsActive);
+        var Otp = user.otps
+        .OrderByDescending(x => x.CreatedOn)
+        .Where(x => x.otpType == OtpType.ConfirmEmail)
+        .FirstOrDefault(x => x.IsActive);
+
         if (Otp is null)
             return Result.failure(UserErrors.InvalidCode);
 
-        var resultOtpConfirm = EncryptionHelper.Decrypt(Otp.Code) == request.Code;
+        var resultOtpConfirm = _encryptionHelper.Decrypt(Otp.Code) == request.Code;
         if (!resultOtpConfirm)
             return Result.failure(UserErrors.InvalidCode);
 
@@ -132,12 +130,7 @@ public class AuthService : IAuth
 
         if (result.Succeeded)
         {
-            var roleName = user.userType switch
-            {
-                UserType.Carpenter => DefaultRoles.Carpenter,
-                UserType.Client => DefaultRoles.Client,
-                _ => throw new InvalidOperationException("Invalid user type.")
-            };
+            var roleName = GetRoleUser(user);
             await _userManager.AddToRoleAsync(user, roleName);
             return Result.Success();
         }
@@ -146,14 +139,106 @@ public class AuthService : IAuth
 
     }
 
-    private (int uid, string encrypted, DateTime expireotp) geterate_rand_expireotp()
+    public async Task<Result> RensendEmail(ResendRequest request)
+    {
+        if (await _userManager.FindByEmailAsync(request.Email) is not { } user)
+            return Result.Success();
+        if (await _userManager.IsEmailConfirmedAsync(user))
+            return Result.failure(UserErrors.DuplicatedConfirmation);
+
+        var (uid, encrypted, expireotp) = GeterateRandExpireotp();
+        user.otps.Add(
+            new Otp
+            {
+                Code = encrypted,
+                ExpiresOn = expireotp,
+                CreatedOn = DateTime.UtcNow,
+                otpType = OtpType.ConfirmEmail
+            }
+        );
+        await _userManager.UpdateAsync(user);
+
+        await SendConfirmationEmail(user, uid);
+        return Result.Success();
+
+    }
+
+
+    public async Task<Result<AuthRespond>> AuthenticationWithGoogle(AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (!Enum.TryParse<UserType>(authGoogleRequest.userType, true, out var userType))
+                return Result.failure<AuthRespond>(UserErrors.InvalidRole);
+
+            if (userType != UserType.Client && userType != UserType.Carpenter)
+                return Result.failure<AuthRespond>(UserErrors.InvalidRole);
+            var payload = await ValidateGoogleToken(authGoogleRequest.idToken);
+            if (await _userManager.FindByEmailAsync(payload.Email) is not { } user)
+            {
+                user = new ApplicationUser
+                {
+                    FirstName = payload.GivenName ?? "Unknown",
+                    LastName = payload.FamilyName ?? "Unknown",
+                    Email = payload.Email,
+                    UserName = payload.Email,
+                    userType = userType
+                    ,
+                    EmailConfirmed = true
+                };
+                var result = await _userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                {
+                    var error = result.Errors.First();
+                    return Result.failure<AuthRespond>(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
+                }
+                var roleName = GetRoleUser(user);
+                await _userManager.AddToRoleAsync(user, roleName);
+
+            }
+            var response = await AddTokenAndRefresh(user, cancellationToken);
+            return Result.Success(response);
+        }
+        catch (InvalidJwtException ex)
+        {
+            return Result.failure<AuthRespond>(new Error("Google.InvalidToken", ex.Message, StatusCodes.Status401Unauthorized));
+        }
+    }
+    private async Task<GoogleJsonWebSignature.Payload> ValidateGoogleToken(string idToken)
+    {
+        var validationSettings = new GoogleJsonWebSignature.ValidationSettings
+        {
+            Audience = new[] { _optionsGoogle.ClientID }
+        };
+        var payload = await GoogleJsonWebSignature.ValidateAsync(idToken, validationSettings);
+        return payload;
+    }
+    private async Task SendConfirmationEmail(ApplicationUser user, int uid)
+    {
+        var emailBody = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation",
+            new Dictionary<string, string>
+            {
+                {"--- APP NAME ---","Woodia"},
+                {"[User's Name]",$"{user.FirstName} {user.LastName}" },
+                {"123456",$"{uid}"},
+                {"next 15 minutes.",$"next {_Otpxpiryminit} minutes."},
+                { "[Your Company]","Woodia"}
+            });
+
+        await _emailSender.SendEmailAsync(user.Email!, "Woodia", emailBody);
+    }
+
+
+    private (int uid, string encrypted, DateTime expireotp) GeterateRandExpireotp()
     {
         var rand = new Random();
         var uid = rand.Next(100000, 1000000);
-        string encrypted = EncryptionHelper.Encrypt(uid.ToString());
+        string encrypted = _encryptionHelper.Encrypt(uid.ToString());
         var expireotp = DateTime.UtcNow.AddMinutes(_Otpxpiryminit);
         return (uid, encrypted, expireotp);
     }
+
+
 
     private async Task<AuthRespond> AddTokenAndRefresh(ApplicationUser user, CancellationToken cancellationToken)
     {
@@ -168,8 +253,11 @@ public class AuthService : IAuth
             ExpiresOn = refreshTokenExpiration
         });
         await _userManager.UpdateAsync(user);
-        return new AuthRespond(user.Id, user.Email, user.FirstName, user.LastName, user.userType, token, expiresIn, refreshToken, refreshTokenExpiration);
+        return new AuthRespond(user.Id, user.Email, user.FirstName, user.LastName, user.userType.ToString(), token, expiresIn, refreshToken, refreshTokenExpiration);
     }
+
+
+
 
     private static string GenerateRefreshToken()
             => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
@@ -185,6 +273,17 @@ public class AuthService : IAuth
                                    .Distinct()
                                    .ToListAsync(cancellationToken);
         return (UserRoles, userPermissions);
+    }
+
+    private string GetRoleUser(ApplicationUser user)
+    {
+        var roleName = user.userType switch
+        {
+            UserType.Carpenter => DefaultRoles.Carpenter,
+            UserType.Client => DefaultRoles.Client,
+            _ => throw new InvalidOperationException("Invalid user type.")
+        };
+        return roleName;
     }
 
 }

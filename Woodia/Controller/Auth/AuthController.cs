@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [Route("[controller]")]
 [ApiController]
+[ApiExplorerSettings(GroupName = "auth")]
 public class AuthController : ControllerBase
 {
     private readonly IAuth _auth;
@@ -34,4 +35,17 @@ public class AuthController : ControllerBase
         var result = await _auth.GetRefreshToken(request.Token, request.RefreshToken, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
+    [HttpPost("resend-confirmation")]
+    public async Task<IActionResult> ResendEmail([FromBody] ResendRequest request)
+    {
+        var result = await _auth.RensendEmail(request);
+        return result.IsSuccess ? Ok() : result.ToProblem();
+    }
+    [HttpPost("google-signin")]
+    public async Task<IActionResult> SigninGoogle([FromBody] AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
+    {
+        var result = await _auth.AuthenticationWithGoogle(authGoogleRequest, cancellationToken);
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
+    }
+
 }
