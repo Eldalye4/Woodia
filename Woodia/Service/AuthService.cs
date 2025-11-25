@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 
 
@@ -16,7 +17,8 @@ using Microsoft.Extensions.Options;
 
 public class AuthService(ApplicationDbContext context, UserManager<ApplicationUser> userManager
     , IEmailSender emailSender, IjwtProvider jwtProvider, SignInManager<ApplicationUser> signInManager,
-EncryptionHelper encryptionHelper, IHttpContextAccessor httpContextAccessor, IOptions<GoogleSettings> optionsGoogle, ILogger<AuthService> logger) : IAuth
+EncryptionHelper encryptionHelper, IHttpContextAccessor httpContextAccessor, IOptions<GoogleSettings> optionsGoogle,
+ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpClientFactory httpClientFactory) : IAuth
 {
     private readonly ApplicationDbContext _context = context;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
@@ -26,9 +28,13 @@ EncryptionHelper encryptionHelper, IHttpContextAccessor httpContextAccessor, IOp
     private readonly EncryptionHelper _encryptionHelper = encryptionHelper;
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
     private readonly ILogger<AuthService> _logger = logger;
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+    private readonly FacebookSettings _optionsFacebook = optionsFacebook.Value;
     private readonly GoogleSettings _optionsGoogle = optionsGoogle.Value;
     private readonly int _Otpxpiryminit = 15;
     private readonly int _refreshTokenExpiryDays = 14;
+    public const string TokenValiateUrl = "https://graph.facebook.com/debug_token?input_token={0}&access_token={1}|{2}";
+    public const string UserInfoUrl = "https://graph.facebook.com/me?fields=first_name,last_name,email,picture&access_token={0}";
 
     public async Task<Result<AuthRespond>> GetToken(string Email, string Password, CancellationToken cancellationToken)
     {
@@ -204,6 +210,56 @@ EncryptionHelper encryptionHelper, IHttpContextAccessor httpContextAccessor, IOp
             return Result.failure<AuthRespond>(new Error("Google.InvalidToken", ex.Message, StatusCodes.Status401Unauthorized));
         }
     }
+
+    public async Task<Result<AuthRespond>> AuthenticationWithFacebook(AuthFacebookRequest authFacebookRequest, CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (!Enum.TryParse<UserType>(authFacebookRequest.userType, true, out var userType))
+                return Result.failure<AuthRespond>(UserErrors.InvalidRole);
+
+            if (userType != UserType.Client && userType != UserType.Carpenter)
+                return Result.failure<AuthRespond>(UserErrors.InvalidRole);
+            var validatedTokenResult = await validateAccessToken(authFacebookRequest.idToken);
+
+            if (validatedTokenResult is null || validatedTokenResult.Data is null || !validatedTokenResult!.Data!.IsValid)
+            {
+                return Result.failure<AuthRespond>(UserErrors.InvalidFacebookToken);
+            }
+            var userInfo = await getUserInfo(authFacebookRequest.idToken);
+            if (userInfo is null)
+            {
+                return Result.failure<AuthRespond>(UserErrors.InvalidFacebookToken);
+            }
+            if (await _userManager.FindByEmailAsync(userInfo!.Email!) is not { } user)
+            {
+                user = new ApplicationUser
+                {
+                    FirstName = userInfo.FirstName!,
+                    LastName = userInfo.LastName!,
+                    Email = userInfo.Email,
+                    UserName = userInfo.Email,
+                    userType = userType,
+                    EmailConfirmed = true
+                };
+                var result = await _userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                {
+                    var error = result.Errors.First();
+                    return Result.failure<AuthRespond>(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
+                }
+                var roleName = GetRoleUser(user);
+                await _userManager.AddToRoleAsync(user, roleName);
+
+            }
+            var response = await AddTokenAndRefresh(user, cancellationToken);
+            return Result.Success(response);
+        }
+        catch (Exception ex)
+        {
+            return Result.failure<AuthRespond>(new Error("Facebook.InvalidToken", ex.Message, StatusCodes.Status401Unauthorized));
+        }
+    }
     private async Task<GoogleJsonWebSignature.Payload> ValidateGoogleToken(string idToken)
     {
         var validationSettings = new GoogleJsonWebSignature.ValidationSettings
@@ -286,4 +342,36 @@ EncryptionHelper encryptionHelper, IHttpContextAccessor httpContextAccessor, IOp
         return roleName;
     }
 
+
+
+    private async Task<FacebookTokenValidationResult?> validateAccessToken(string accessToken)
+    {
+        var formattedUrl = string.Format(TokenValiateUrl, accessToken, _optionsFacebook.ClientID,
+        _optionsFacebook.ClientSecret);
+        var result = await _httpClientFactory.CreateClient().GetAsync(formattedUrl);
+        if (!result.IsSuccessStatusCode)
+        {
+
+            return null;
+        }
+        var responseAsString = await result.Content.ReadAsStringAsync();
+
+        
+        var data= JsonConvert.DeserializeObject<FacebookTokenValidationResult>(responseAsString);
+ 
+
+        return data;
+    }
+
+    private async Task<FacebookUserInfo?> getUserInfo(string accessToken)
+    {
+        var formattedUrl = string.Format(UserInfoUrl, accessToken);
+        var result = await _httpClientFactory.CreateClient().GetAsync(formattedUrl);
+        if (!result.IsSuccessStatusCode)
+        {
+            return null;
+        }
+        var responseAsString = await result.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<FacebookUserInfo>(responseAsString)!;
+    }
 }

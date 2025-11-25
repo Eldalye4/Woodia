@@ -48,4 +48,11 @@ public class AuthController : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
 
+    [HttpPost("facebook-signin")]
+    public async Task<IActionResult> SigninFacebook([FromBody] AuthFacebookRequest authFacebookRequest , CancellationToken cancellationToken)
+    {
+        var result = await _auth.AuthenticationWithFacebook(authFacebookRequest, cancellationToken);
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
+    }
+
 }

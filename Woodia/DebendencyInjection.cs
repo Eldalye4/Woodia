@@ -20,6 +20,7 @@ public static class DebendencyInjection
         services.AddControllers();
         services.AddAuthConfig(configuration);
         services.AddMapsterConfig();
+        services.AddHttpClient();
         services.AddScoped<IAuth, AuthService>();
         services.AddSingleton<IjwtProvider, JwtProvider>();
         services.AddScoped<IEmailSender, EmailService>();
@@ -35,6 +36,7 @@ public static class DebendencyInjection
         services.Configure<SendGridSetting>(configuration.GetSection(nameof(SendGridSetting)));
         services.Configure<EncryptionSetting>(configuration.GetSection(nameof(EncryptionSetting)));
         services.Configure<GoogleSettings>(configuration.GetSection(nameof(GoogleSettings)));
+        services.Configure<FacebookSettings>(configuration.GetSection(nameof(FacebookSettings)));
         
 
 
