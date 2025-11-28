@@ -22,6 +22,8 @@ public static class DebendencyInjection
         services.AddMapsterConfig();
         services.AddHttpClient();
         services.AddScoped<IAuth, AuthService>();
+        services.AddScoped<IGovernorateService, GovernorateService>();
+        services.AddScoped<IClientService, ClientService>();
         services.AddSingleton<IjwtProvider, JwtProvider>();
         services.AddScoped<IEmailSender, EmailService>();
         services.AddScoped<EncryptionHelper>();
@@ -37,7 +39,7 @@ public static class DebendencyInjection
         services.Configure<EncryptionSetting>(configuration.GetSection(nameof(EncryptionSetting)));
         services.Configure<GoogleSettings>(configuration.GetSection(nameof(GoogleSettings)));
         services.Configure<FacebookSettings>(configuration.GetSection(nameof(FacebookSettings)));
-        
+
 
 
         services.AddHttpContextAccessor();

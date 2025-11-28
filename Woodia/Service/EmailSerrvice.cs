@@ -7,18 +7,21 @@ using MimeKit;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-public class EmailService(IOptions<SendGridSetting> SendGridSetting) : IEmailSender
+public class EmailService(IOptions<SendGridSetting> SendGridSetting ,ILogger<EmailService> logger) : IEmailSender
 {
     private readonly SendGridSetting _sendGridSettings = SendGridSetting.Value;
+    private readonly ILogger<EmailService> _logger = logger;
 
     public async Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
          try
         {
             var client = new SendGridClient(_sendGridSettings.ApiKey);
-            
+            _logger.LogInformation("ApiKey : {ApiKey} SenderEmail : {SenderEmail}",_sendGridSettings.ApiKey, _sendGridSettings.SenderEmail);
             var from = new EmailAddress(_sendGridSettings.SenderEmail, _sendGridSettings.SenderName);
             var to = new EmailAddress(email);
+
+            _logger.LogInformation("Toooooooooooooooo {to}", to);
             
             var msg = MailHelper.CreateSingleEmail(
                 from, 

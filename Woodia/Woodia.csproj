@@ -15,6 +15,9 @@
     <Content Include="Templates\ForgetPassword.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Templates\EmailNewVerify.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <PackageReference Include="CloudinaryDotNet" Version="1.27.7" />
     <PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
     <PackageReference Include="MailKit" Version="4.13.0" />

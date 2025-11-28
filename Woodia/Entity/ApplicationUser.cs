@@ -8,4 +8,5 @@ public sealed class ApplicationUser : IdentityUser
     public List<Otp> otps { get; set; } = [];
     public List<RefreshToken> RefreshTokens { get; set; } = [];
 
+    public ContactInformation contactInformation{ get; set; } =null!;
 }

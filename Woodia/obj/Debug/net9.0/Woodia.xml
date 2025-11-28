@@ -76,5 +76,41 @@
         <member name="M:Woodia.Persistence.Migrations.OtpType.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:Woodia.Persistence.Migrations.EntityGovernorateandseeddata">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EntityGovernorateandseeddata.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EntityGovernorateandseeddata.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EntityGovernorateandseeddata.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.ContactInformation">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.ContactInformation.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.ContactInformation.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.ContactInformation.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.editTypePhone">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.editTypePhone.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.editTypePhone.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.editTypePhone.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

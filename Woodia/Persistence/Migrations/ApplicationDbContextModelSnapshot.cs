@@ -176,6 +176,237 @@ namespace Woodia.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ContactInformation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdditionalInfo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("AddressLine")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("GovernateId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GovernateId")
+                        .IsUnique();
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("contactInformation");
+                });
+
+            modelBuilder.Entity("Governorate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Governorate");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            NameAr = "القاهرة",
+                            NameEn = "Cairo"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            NameAr = "الجيزة",
+                            NameEn = "Giza"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            NameAr = "الإسكندرية",
+                            NameEn = "Alexandria"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            NameAr = "الدقهلية",
+                            NameEn = "Dakahlia"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            NameAr = "البحر الأحمر",
+                            NameEn = "Red Sea"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            NameAr = "البحيرة",
+                            NameEn = "Beheira"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            NameAr = "الفيوم",
+                            NameEn = "Fayoum"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            NameAr = "الغربية",
+                            NameEn = "Gharbiya"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            NameAr = "الإسماعيلية",
+                            NameEn = "Ismailia"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            NameAr = "المنوفية",
+                            NameEn = "Monufia"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            NameAr = "المنيا",
+                            NameEn = "Minya"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            NameAr = "القليوبية",
+                            NameEn = "Qalyubia"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            NameAr = "الوادي الجديد",
+                            NameEn = "New Valley"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            NameAr = "السويس",
+                            NameEn = "Suez"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            NameAr = "أسوان",
+                            NameEn = "Aswan"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            NameAr = "أسيوط",
+                            NameEn = "Assiut"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            NameAr = "بني سويف",
+                            NameEn = "Beni Suef"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            NameAr = "بورسعيد",
+                            NameEn = "Port Said"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            NameAr = "دمياط",
+                            NameEn = "Damietta"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            NameAr = "الشرقية",
+                            NameEn = "Sharkia"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            NameAr = "جنوب سيناء",
+                            NameEn = "South Sinai"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            NameAr = "كفر الشيخ",
+                            NameEn = "Kafr El Sheikh"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            NameAr = "مطروح",
+                            NameEn = "Matrouh"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            NameAr = "الأقصر",
+                            NameEn = "Luxor"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            NameAr = "قنا",
+                            NameEn = "Qena"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            NameAr = "شمال سيناء",
+                            NameEn = "North Sinai"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            NameAr = "سوهاج",
+                            NameEn = "Sohag"
+                        });
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -360,6 +591,25 @@ namespace Woodia.Persistence.Migrations
                     b.Navigation("otps");
                 });
 
+            modelBuilder.Entity("ContactInformation", b =>
+                {
+                    b.HasOne("Governorate", "governorate")
+                        .WithOne("contactInformation")
+                        .HasForeignKey("ContactInformation", "GovernateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApplicationUser", "user")
+                        .WithOne("contactInformation")
+                        .HasForeignKey("ContactInformation", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("governorate");
+
+                    b.Navigation("user");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("ApplicationRole", null)
@@ -409,6 +659,17 @@ namespace Woodia.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ApplicationUser", b =>
+                {
+                    b.Navigation("contactInformation")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Governorate", b =>
+                {
+                    b.Navigation("contactInformation");
                 });
 #pragma warning restore 612, 618
         }

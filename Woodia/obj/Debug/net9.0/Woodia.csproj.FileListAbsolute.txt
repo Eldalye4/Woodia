@@ -202,3 +202,4 @@
 /media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/SendGrid.dll
 /media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/StarkbankEcdsa.dll
 /media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/Templates/ForgetPassword.html
+/media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/Templates/EmailNewVerify.html

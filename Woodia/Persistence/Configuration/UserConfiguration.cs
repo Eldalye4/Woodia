@@ -16,6 +16,11 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
         .ToTable("Otps")
         .WithOwner()
         .HasForeignKey("UserId");
+
+        builder.HasOne(x => x.contactInformation)
+        .WithOne(x => x.user)
+        .HasForeignKey<ContactInformation>(x => x.UserId);
+
         builder.Property(x => x.FirstName).HasMaxLength(100);
         builder.Property(x => x.LastName).HasMaxLength(100);
         builder.HasData(new ApplicationUser

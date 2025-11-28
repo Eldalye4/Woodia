@@ -11,10 +11,6 @@ using Newtonsoft.Json;
 
 
 
-// "email": "ahm4444l@gmail.com",
-//   "type": "Carpenter",
-//   "password": "klFFo##145"
-
 public class AuthService(ApplicationDbContext context, UserManager<ApplicationUser> userManager
     , IEmailSender emailSender, IjwtProvider jwtProvider, SignInManager<ApplicationUser> signInManager,
 EncryptionHelper encryptionHelper, IHttpContextAccessor httpContextAccessor, IOptions<GoogleSettings> optionsGoogle,
