@@ -1,4 +1,3 @@
-public record AuthGoogleRequest (
-    string idToken,
-    string userType
+public record AuthGoogleRequest(
+    string idToken
 );

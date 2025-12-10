@@ -5,6 +5,8 @@ public interface IAuth
     Task<Result<AuthRespond>> GetToken(string Email, string Password, CancellationToken cancellationToken);
     Task<Result<AuthRespond>> GetRefreshToken(string token, string refreshToken, CancellationToken cancellationToken);
     Task<Result> RensendEmail(ResendRequest request);
-    Task<Result<AuthRespond>> AuthenticationWithGoogle(AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken);
+    Task<Result<AuthRespond>> SignupGoogle(RegisterGoogleRequest authGoogleRequest, CancellationToken cancellationToken);
+    Task<Result<AuthRespond>> LoginGoogle(AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken);
     Task<Result<AuthRespond>> AuthenticationWithFacebook(AuthFacebookRequest authFacebookRequest, CancellationToken cancellationToken);
+    
 }   

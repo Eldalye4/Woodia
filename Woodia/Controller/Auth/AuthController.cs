@@ -41,10 +41,17 @@ public class AuthController : ControllerBase
         var result = await _auth.RensendEmail(request);
         return result.IsSuccess ? Ok() : result.ToProblem();
     }
-    [HttpPost("google-signin")]
-    public async Task<IActionResult> SigninGoogle([FromBody] AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
+    [HttpPost("google-Signup")]
+    public async Task<IActionResult> SigninGoogle([FromBody] RegisterGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
     {
-        var result = await _auth.AuthenticationWithGoogle(authGoogleRequest, cancellationToken);
+        var result = await _auth.SignupGoogle(authGoogleRequest, cancellationToken);
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
+    }
+
+    [HttpPost("google-login")]
+    public async Task<IActionResult> loginGoogle([FromBody] AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
+    {
+        var result = await _auth.LoginGoogle(authGoogleRequest, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
 

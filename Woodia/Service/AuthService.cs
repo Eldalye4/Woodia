@@ -50,9 +50,22 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
     }
 
 
+    public async Task<Result<AuthRespond>> LoginGoogle(AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
+    {
+
+        var payload = await ValidateGoogleToken(authGoogleRequest.idToken);
+        if (await _userManager.FindByEmailAsync(payload.Email) is not { } user)
+        {
+            return Result.failure<AuthRespond>(UserErrors.InvalidCredentials);
+        }
+        var response = await AddTokenAndRefresh(user, cancellationToken);
+        return Result.Success(response);
+    }
+
     public async Task<Result<AuthRespond>> GetRefreshToken(string token, string refreshToken, CancellationToken cancellationToken)
     {
         var userId = _jwtProvider.ValidateToken(token);
+        _logger.LogInformation("{log}", userId);
         if (userId is null)
             return Result.failure<AuthRespond>(UserErrors.InvalidJwtToken);
 
@@ -166,7 +179,7 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
     }
 
 
-    public async Task<Result<AuthRespond>> AuthenticationWithGoogle(AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
+    public async Task<Result<AuthRespond>> SignupGoogle(RegisterGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
     {
         try
         {
@@ -176,28 +189,30 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
             if (userType != UserType.Client && userType != UserType.Carpenter)
                 return Result.failure<AuthRespond>(UserErrors.InvalidRole);
             var payload = await ValidateGoogleToken(authGoogleRequest.idToken);
-            if (await _userManager.FindByEmailAsync(payload.Email) is not { } user)
-            {
-                user = new ApplicationUser
-                {
-                    FirstName = payload.GivenName ?? "Unknown",
-                    LastName = payload.FamilyName ?? "Unknown",
-                    Email = payload.Email,
-                    UserName = payload.Email,
-                    userType = userType
-                    ,
-                    EmailConfirmed = true
-                };
-                var result = await _userManager.CreateAsync(user);
-                if (!result.Succeeded)
-                {
-                    var error = result.Errors.First();
-                    return Result.failure<AuthRespond>(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
-                }
-                var roleName = GetRoleUser(user);
-                await _userManager.AddToRoleAsync(user, roleName);
 
+            var emailIsExists = await _userManager.Users.AnyAsync(x => x.Email == payload.Email, cancellationToken);
+            if (emailIsExists)
+                return Result.failure<AuthRespond>(UserErrors.DuplicatedEmail);
+            
+            var user = new ApplicationUser
+            {
+                FirstName = payload.GivenName ,
+                LastName = payload.FamilyName,
+                Email = payload.Email,
+                UserName = payload.Email,
+                userType = userType,
+                EmailConfirmed = true
+            };
+            var result = await _userManager.CreateAsync(user);
+            if (!result.Succeeded)
+            {
+                var error = result.Errors.First();
+                return Result.failure<AuthRespond>(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
             }
+            var roleName = GetRoleUser(user);
+            await _userManager.AddToRoleAsync(user, roleName);
+
+            
             var response = await AddTokenAndRefresh(user, cancellationToken);
             return Result.Success(response);
         }
@@ -370,4 +385,11 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
         var responseAsString = await result.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<FacebookUserInfo>(responseAsString)!;
     }
+
+    public Task<Result<AuthRespond>> AuthenticationWithGoogle(AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    
 }
