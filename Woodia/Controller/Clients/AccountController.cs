@@ -53,16 +53,16 @@ public class AccountController : ControllerBase
         var result = await _clientService.AddContactInformation(User.GetUserById()!, request, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
-    [HttpGet("contact-info/{Id}")]
-    public async Task<IActionResult> GetContactInformation([FromRoute] int Id, CancellationToken cancellationToken)
+    [HttpGet("contact-info")]
+    public async Task<IActionResult> GetContactInformation(CancellationToken cancellationToken)
     {
-        var result = await _clientService.GetContactInformation(Id, cancellationToken);
+        var result = await _clientService.GetContactInformation(User.GetUserById()!, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
-    [HttpPut("contact-info/{Id}")]
-    public async Task<IActionResult> UpdateContactInformation([FromRoute] int Id,[FromBody] ContactInformationRequest request, CancellationToken cancellationToken)
+    [HttpPut("contact-info")]
+    public async Task<IActionResult> UpdateContactInformation([FromBody] ContactInformationRequest request, CancellationToken cancellationToken)
     {
-        var result = await _clientService.UpdateContactInformation(Id, request,cancellationToken);
-        return result.IsSuccess ? NoContent(): result.ToProblem();
+        var result = await _clientService.UpdateContactInformation(User.GetUserById()!, request, cancellationToken);
+        return result.IsSuccess ? NoContent() : result.ToProblem();
     }
 }

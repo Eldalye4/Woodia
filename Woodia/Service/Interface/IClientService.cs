@@ -6,6 +6,6 @@ public interface IClientService
     Task<Result> ResendEmail(string userId, string email);
     Task<Result> VerifyEmail(string userId, ConfirmEmailRequest confirmEmailRequest);
     Task<Result<ContactInformationResponse>> AddContactInformation(string userId, ContactInformationRequest request, CancellationToken cancellationToken);
-    Task<Result<ContactInformationResponse>> GetContactInformation(int id, CancellationToken cancellationToken);
-    Task<Result> UpdateContactInformation(int id, ContactInformationRequest request, CancellationToken cancellationToken);
+    Task<Result<ContactInformationResponse>> GetContactInformation(string userId, CancellationToken cancellationToken);
+    Task<Result> UpdateContactInformation(string userId, ContactInformationRequest request, CancellationToken cancellationToken);
 }

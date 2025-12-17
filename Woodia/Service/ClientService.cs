@@ -16,7 +16,7 @@ public class ClientService : IClientService
     private readonly int _Otpxpiryminit = 15;
 
     public ClientService(IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager, IEmailSender emailSender
-    , EncryptionHelper encryptionHelper,ILogger<ClientService> logger,ApplicationDbContext context)
+    , EncryptionHelper encryptionHelper, ILogger<ClientService> logger, ApplicationDbContext context)
     {
         _httpContextAccessor = httpContextAccessor;
         _userManager = userManager;
@@ -61,7 +61,7 @@ public class ClientService : IClientService
 
             }
         );
-       
+
         var result = await _userManager.UpdateAsync(user);
         await SendVerifyEmail(user, emailUpdate.Email, uid);
 
@@ -105,7 +105,7 @@ public class ClientService : IClientService
         return Result.Success();
     }
 
-    public async Task<Result> VerifyEmail(string userId,ConfirmEmailRequest confirmEmailRequest)
+    public async Task<Result> VerifyEmail(string userId, ConfirmEmailRequest confirmEmailRequest)
     {
         if (await _userManager.FindByIdAsync(userId) is not { } user)
         {
@@ -139,51 +139,55 @@ public class ClientService : IClientService
 
     }
 
-    public async Task<Result<ContactInformationResponse>> AddContactInformation(string userId,ContactInformationRequest request ,CancellationToken cancellationToken)
+    public async Task<Result<ContactInformationResponse>> AddContactInformation(string userId, ContactInformationRequest request, CancellationToken cancellationToken)
     {
-        var duplicatePhone =await  _context.contactInformation.AnyAsync(x => x.PhoneNumber == request.PhoneNumber,cancellationToken);
-        if (duplicatePhone) {
+        var duplicatePhone = await _context.contactInformation.AnyAsync(x => x.PhoneNumber == request.PhoneNumber, cancellationToken);
+        if (duplicatePhone)
+        {
             return Result.failure<ContactInformationResponse>(UserErrors.DuplicatedPhone);
         }
         var ContactInformation = request.Adapt<ContactInformation>();
         ContactInformation.UserId = userId;
-        
+
         await _context.contactInformation.AddAsync(ContactInformation, cancellationToken);
         await _context.SaveChangesAsync();
         var Response = await _context.contactInformation
-                    .Where(x=>x.Id==ContactInformation.Id)
+                    .Where(x => x.Id == ContactInformation.Id)
                     .Include(x => x.governorate)
                     .ProjectToType<ContactInformationResponse>()
                     .FirstOrDefaultAsync();
         return Result.Success(Response!);
     }
 
-    public async Task<Result<ContactInformationResponse>> GetContactInformation(int id, CancellationToken cancellationToken)
+    public async Task<Result<ContactInformationResponse>> GetContactInformation(string userId, CancellationToken cancellationToken)
     {
-        var findContactInformation = await _context.contactInformation.AnyAsync(x => x.Id == id, cancellationToken);
-        if (!findContactInformation)
+        var user = await _userManager.Users
+        .Where(x => x.Id == userId)
+        .Include(x => x.contactInformation)
+            .ThenInclude(x => x.governorate)
+        .FirstOrDefaultAsync(cancellationToken);
+
+        if (user?.contactInformation == null)
             return Result.failure<ContactInformationResponse>(ClientProfileError.ContactNotFound);
-        var contactInformation = await _context.contactInformation
-                                        .Where(x => x.Id == id)
-                                        .Include(x => x.governorate)
-                                        .ProjectToType<ContactInformationResponse>()
-                                        .FirstAsync();
-        return Result.Success(contactInformation);                             
+        var contactInformation = user.Adapt<ContactInformationResponse>();
+        return Result.Success(contactInformation);
     }
 
-    public async Task<Result> UpdateContactInformation(int id,  ContactInformationRequest request,CancellationToken cancellationToken)
+    public async Task<Result> UpdateContactInformation(string userId,ContactInformationRequest request, CancellationToken cancellationToken)
     {
-        var findContactInformation = await _context.contactInformation.AnyAsync(x => x.Id == id, cancellationToken);
-        if (!findContactInformation)
+        var userContactInformation = await _userManager.Users
+        .Where(x => x.Id == userId)
+        .Include(x => x.contactInformation)
+            .ThenInclude(x => x.governorate)
+        .FirstOrDefaultAsync(cancellationToken);
+        
+        if (userContactInformation==null)
             return Result.failure<ContactInformationResponse>(ClientProfileError.ContactNotFound);
-        var contactInformation = await _context.contactInformation
-                                        .Where(x => x.Id == id)
-                                        .Include(x => x.governorate)
-                                        .FirstAsync();
-        contactInformation.AdditionalInfo = request.AdditionalInfo;
-        contactInformation.AddressLine = request.AddressLine;
-        contactInformation.GovernateId= request.GovernateId;
-        contactInformation.PhoneNumber = request.PhoneNumber;
+      
+        userContactInformation.contactInformation.AdditionalInfo = request.AdditionalInfo;
+        userContactInformation.contactInformation.AddressLine = request.AddressLine;
+        userContactInformation.contactInformation.GovernateId = request.GovernateId;
+        userContactInformation.contactInformation.PhoneNumber = request.PhoneNumber;
         await _context.SaveChangesAsync();
         return Result.Success();
     }
