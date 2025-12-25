@@ -176,6 +176,41 @@ namespace Woodia.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Categories", (string)null);
+                });
+
             modelBuilder.Entity("ContactInformation", b =>
                 {
                     b.Property<int>("Id")
@@ -208,8 +243,7 @@ namespace Woodia.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GovernateId")
-                        .IsUnique();
+                    b.HasIndex("GovernateId");
 
                     b.HasIndex("PhoneNumber")
                         .IsUnique();
@@ -240,7 +274,7 @@ namespace Woodia.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Governorate");
+                    b.ToTable("Governorate", (string)null);
 
                     b.HasData(
                         new
@@ -591,11 +625,21 @@ namespace Woodia.Persistence.Migrations
                     b.Navigation("otps");
                 });
 
+            modelBuilder.Entity("Category", b =>
+                {
+                    b.HasOne("Category", "Parent")
+                        .WithMany("SubCategories")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("ContactInformation", b =>
                 {
                     b.HasOne("Governorate", "governorate")
-                        .WithOne("contactInformation")
-                        .HasForeignKey("ContactInformation", "GovernateId")
+                        .WithMany("contactInformation")
+                        .HasForeignKey("GovernateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -665,6 +709,11 @@ namespace Woodia.Persistence.Migrations
                 {
                     b.Navigation("contactInformation")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Category", b =>
+                {
+                    b.Navigation("SubCategories");
                 });
 
             modelBuilder.Entity("Governorate", b =>

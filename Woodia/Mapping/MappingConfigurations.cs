@@ -12,9 +12,15 @@ public class MappingConfigurations : IRegister
         config.NewConfig<ContactInformation, ContactInformationResponse>()
         .Map(dest => dest.Governate, src => src.governorate.NameEn)
         .Map(dest => dest.UserId, src => src.UserId);
-        ;
 
-        
+
+        config.NewConfig<Category, CategoryResponse>()
+        .Map(dest => dest.ChildCategory, src => src.SubCategories);
+
+        config.NewConfig<Category, CategoryNavigationResponse>()
+        .Map(dest => dest.CategoryChildNavigationResponses,
+                 src => src.ParentId == null ?
+                src.SubCategories : src.Parent!.SubCategories);
 
         config.NewConfig<ApplicationUser, ContactInformationResponse>()
         .Map(dest => dest.UserId, src => src.Id)

@@ -112,5 +112,65 @@
         <member name="M:Woodia.Persistence.Migrations.editTypePhone.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:Woodia.Persistence.Migrations.Category">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.Category.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.Category.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.Category.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.seedCategorydate">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.seedCategorydate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.seedCategorydate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.seedCategorydate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.seedCategtegoty2">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.seedCategtegoty2.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.seedCategtegoty2.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.seedCategtegoty2.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.removeSeedDataCategory">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.removeSeedDataCategory.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.removeSeedDataCategory.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.removeSeedDataCategory.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.editrelationbetweengovernorateandcontactinformation">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.editrelationbetweengovernorateandcontactinformation.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.editrelationbetweengovernorateandcontactinformation.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.editrelationbetweengovernorateandcontactinformation.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

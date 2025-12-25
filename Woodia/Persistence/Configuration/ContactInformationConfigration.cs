@@ -13,8 +13,10 @@ public class ContactInformationConfigration : IEntityTypeConfiguration<ContactIn
         .HasMaxLength(20);
 
         builder.HasOne(x => x.governorate)
-        .WithOne(x => x.contactInformation)
-        .HasForeignKey<ContactInformation>(x => x.GovernateId);
+        .WithMany(x => x.contactInformation)
+        .HasForeignKey(x => x.GovernateId);
+
+        
         builder.Property(x => x.AddressLine)
         .HasMaxLength(200)
         .IsRequired();

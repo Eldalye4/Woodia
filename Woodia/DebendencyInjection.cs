@@ -27,6 +27,7 @@ public static class DebendencyInjection
         services.AddSingleton<IjwtProvider, JwtProvider>();
         services.AddScoped<IEmailSender, EmailService>();
         services.AddScoped<EncryptionHelper>();
+        services.AddScoped<ICategory, CategoryService>();
 
         services.AddCors(Options => Options.AddDefaultPolicy(builder =>
             builder.AllowAnyMethod()
@@ -39,6 +40,7 @@ public static class DebendencyInjection
         services.Configure<EncryptionSetting>(configuration.GetSection(nameof(EncryptionSetting)));
         services.Configure<GoogleSettings>(configuration.GetSection(nameof(GoogleSettings)));
         services.Configure<FacebookSettings>(configuration.GetSection(nameof(FacebookSettings)));
+       
 
 
 
