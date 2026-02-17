@@ -1,3 +1,4 @@
+
 public static class ClientProfileError
 {
     public static readonly Error ContactNotFound =

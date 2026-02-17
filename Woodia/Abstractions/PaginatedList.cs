@@ -1,4 +1,6 @@
+namespace Woodia.Abstractions;
 using Microsoft.EntityFrameworkCore;
+
 
 public class PaginatedList<T>(List<T> items, int pageNumber, int count, int pageSize)
 {

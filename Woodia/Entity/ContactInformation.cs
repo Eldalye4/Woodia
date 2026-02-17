@@ -1,3 +1,5 @@
+using Woodia.Entity;
+
 public class ContactInformation
 {
     public int Id { get; set; }

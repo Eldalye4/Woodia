@@ -1,6 +1,6 @@
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
-
+namespace Woodia.Abstractions;
 public static class ResultExtentions
 {
     public static ObjectResult ToProblem(this Result result)

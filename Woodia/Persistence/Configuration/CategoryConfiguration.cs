@@ -17,6 +17,7 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         .WithMany(x => x.SubCategories)
         .HasForeignKey(x => x.ParentId)
         .OnDelete(DeleteBehavior.Restrict);
+        builder.HasQueryFilter(x => !x.IsDeleted);
 
 
 

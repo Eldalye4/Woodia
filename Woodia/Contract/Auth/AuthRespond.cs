@@ -8,5 +8,6 @@ public record AuthRespond
     string Token,
     int ExpiresIn,
     string RefreshToken,
-    DateTime RefreshTokenExpiration
+    DateTime RefreshTokenExpiration,
+    bool IsProfileComplete
 );

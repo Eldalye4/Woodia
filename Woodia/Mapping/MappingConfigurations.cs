@@ -1,5 +1,9 @@
 
+using CloudinaryDotNet;
 using Mapster;
+using Woodia.Contract.Carpenter;
+using Woodia.Contract.Category;
+using Woodia.Entity;
 
 public class MappingConfigurations : IRegister
 {
@@ -29,5 +33,26 @@ public class MappingConfigurations : IRegister
         .Map(dest => dest.Governate, src => src.contactInformation.governorate.NameEn)
         .Map(dest => dest.Id, src => src.contactInformation.Id)
         .Map(dest => dest.PhoneNumber, src => src.contactInformation.PhoneNumber);
+
+        config.NewConfig<PortfolioItemRequest, PortfolioItem>()
+            .Map(dest => dest.PortfolioItemImages, src => src.PortfolioImageUrls.Select(url => new PortfolioItemImage { Url = url }));
+        config.NewConfig<PortfolioItem, PortfolioItemResponse>()
+            .Map(dest => dest.PortfolioImageUrls, src => src.PortfolioItemImages.Select(x => x.Url));
+
+        config.NewConfig<Category, AdminCategoryResponse>()
+            .Map(dest => dest.ImageThumbnail, src => src.ImageUrl)
+            .Map(dest => dest.ParentCategory,
+                src=>src.Parent);
+        config.NewConfig<Category, ParentCategoryResponse>()
+            .Map(src => src.Id, dest => dest.Id)
+            .Map(dest => dest.Name, src => src.Name);
+
+        config.NewConfig<CategoryRequest, Category>()
+            .Map(src => src.ImageUrl, dest => dest.ImageThumbnail);
+        config.NewConfig<ProfessionalProfileRequest, CarpenterProfile>()
+            .Map(dest => dest.ProfileImageUrl, src => src.ProfileImageUrl);
+        
+        config.NewConfig<CarpenterProfile,ProfessionalProfileResponse>()
+            .Map(dest => dest.ProfileImageUrl, src => src.ProfileImageUrl);
     }
 }

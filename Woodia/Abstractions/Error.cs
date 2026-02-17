@@ -1,3 +1,4 @@
+namespace Woodia.Abstractions;
 public record Error(string Code, string Description, int? StatuCode)
 {
     public static readonly Error None =

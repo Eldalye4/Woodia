@@ -203,3 +203,7 @@
 /media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/StarkbankEcdsa.dll
 /media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/Templates/ForgetPassword.html
 /media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/Templates/EmailNewVerify.html
+/media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/FluentValidation.dll
+/media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/SharpGrip.FluentValidation.AutoValidation.Mvc.dll
+/media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/SharpGrip.FluentValidation.AutoValidation.Shared.dll
+/media/ahmed-eldaly/mydisk/1graduationproject/Woodia/bin/Debug/net9.0/FluentValidation.DependencyInjectionExtensions.dll

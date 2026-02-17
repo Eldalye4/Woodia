@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "R3PI5E2xCkg=",
+  "dgSpecHash": "uV3d+J+7mto=",
   "success": true,
   "projectFilePath": "/media/ahmed-eldaly/mydisk/1graduationproject/Woodia/Woodia.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,8 @@
     "/home/ahmed-eldaly/.nuget/packages/azure.identity/1.11.4/azure.identity.1.11.4.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/bouncycastle.cryptography/2.5.1/bouncycastle.cryptography.2.5.1.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/cloudinarydotnet/1.27.7/cloudinarydotnet.1.27.7.nupkg.sha512",
+    "/home/ahmed-eldaly/.nuget/packages/fluentvalidation/12.1.1/fluentvalidation.12.1.1.nupkg.sha512",
+    "/home/ahmed-eldaly/.nuget/packages/fluentvalidation.dependencyinjectionextensions/12.1.1/fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/google.apis/1.70.0/google.apis.1.70.0.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/google.apis.auth/1.70.0/google.apis.auth.1.70.0.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/google.apis.core/1.70.0/google.apis.core.1.70.0.nupkg.sha512",
@@ -96,6 +98,8 @@
     "/home/ahmed-eldaly/.nuget/packages/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl/4.3.2/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/scalar.aspnetcore/2.7.0/scalar.aspnetcore.2.7.0.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/sendgrid/9.29.3/sendgrid.9.29.3.nupkg.sha512",
+    "/home/ahmed-eldaly/.nuget/packages/sharpgrip.fluentvalidation.autovalidation.mvc/2.0.0/sharpgrip.fluentvalidation.autovalidation.mvc.2.0.0.nupkg.sha512",
+    "/home/ahmed-eldaly/.nuget/packages/sharpgrip.fluentvalidation.autovalidation.shared/2.0.0/sharpgrip.fluentvalidation.autovalidation.shared.2.0.0.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/starkbank-ecdsa/1.3.3/starkbank-ecdsa.1.3.3.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/swashbuckle.aspnetcore/9.0.4/swashbuckle.aspnetcore.9.0.4.nupkg.sha512",
     "/home/ahmed-eldaly/.nuget/packages/swashbuckle.aspnetcore.swagger/9.0.4/swashbuckle.aspnetcore.swagger.9.0.4.nupkg.sha512",

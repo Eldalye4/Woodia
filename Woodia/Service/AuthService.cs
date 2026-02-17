@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-
+using Woodia.Entity;
 
 
 public class AuthService(ApplicationDbContext context, UserManager<ApplicationUser> userManager
@@ -26,6 +26,7 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
     private readonly ILogger<AuthService> _logger = logger;
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
     private readonly FacebookSettings _optionsFacebook = optionsFacebook.Value;
+    
     private readonly GoogleSettings _optionsGoogle = optionsGoogle.Value;
     private readonly int _Otpxpiryminit = 15;
     private readonly int _refreshTokenExpiryDays = 14;
@@ -39,14 +40,16 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
             return Result.failure<AuthRespond>(UserErrors.InvalidCredentials);
         }
         var result = await _signInManager.PasswordSignInAsync(user, Password, false, false);
-
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            var response = await AddTokenAndRefresh(user, cancellationToken);
-            return Result.Success(response);
+            return Result.failure<AuthRespond>(result.IsNotAllowed ? UserErrors.EmailNotConfirmed : UserErrors.InvalidCredentials);
         }
-        return Result.failure<AuthRespond>(result.IsNotAllowed ? UserErrors.EmailNotConfirmed : UserErrors.InvalidCredentials);
+        var response = await AddTokenAndRefresh(user, cancellationToken);
+        
 
+        
+        return Result.Success(response );
+            
     }
 
 
@@ -320,7 +323,16 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
             ExpiresOn = refreshTokenExpiration
         });
         await _userManager.UpdateAsync(user);
-        return new AuthRespond(user.Id, user.Email, user.FirstName, user.LastName, user.userType.ToString(), token, expiresIn, refreshToken, refreshTokenExpiration);
+        var IsComplete = true;
+        if (user.userType == UserType.Carpenter)
+        {
+            var CarpenterProfile = await _context.CarpenterProfiles.AnyAsync(x => x.UserId == user.Id,cancellationToken);
+            if (!CarpenterProfile)
+            {
+                IsComplete = false;
+            }
+        }
+        return new AuthRespond(user.Id, user.Email, user.FirstName, user.LastName, user.userType.ToString(), token, expiresIn, refreshToken, refreshTokenExpiration,IsComplete);
     }
 
 
@@ -386,10 +398,7 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
         return JsonConvert.DeserializeObject<FacebookUserInfo>(responseAsString)!;
     }
 
-    public Task<Result<AuthRespond>> AuthenticationWithGoogle(AuthGoogleRequest authGoogleRequest, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    
 
     
 }

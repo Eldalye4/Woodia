@@ -1,6 +1,9 @@
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using CloudinaryDotNet;
+using FluentValidation;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,7 +13,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using Woodia.Abstractions.FileConfiguration;
+using Woodia.Entity;
+using Woodia.Service;
+using Woodia.Service.Interface;
 public static class DebendencyInjection
 {
     public static IServiceCollection AddDependecy(this IServiceCollection services, IConfiguration configuration)
@@ -28,6 +35,12 @@ public static class DebendencyInjection
         services.AddScoped<IEmailSender, EmailService>();
         services.AddScoped<EncryptionHelper>();
         services.AddScoped<ICategory, CategoryService>();
+        services.AddScoped<ICarpenterService, CarpenterService>();
+        services.AddScoped<Ifile, FileService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddValidatorsFromAssemblyContaining<Program>();
+
+        services.AddFluentValidationAutoValidation();
 
         services.AddCors(Options => Options.AddDefaultPolicy(builder =>
             builder.AllowAnyMethod()
@@ -40,6 +53,7 @@ public static class DebendencyInjection
         services.Configure<EncryptionSetting>(configuration.GetSection(nameof(EncryptionSetting)));
         services.Configure<GoogleSettings>(configuration.GetSection(nameof(GoogleSettings)));
         services.Configure<FacebookSettings>(configuration.GetSection(nameof(FacebookSettings)));
+        services.Configure<CloundarySettings>(configuration.GetSection(nameof(CloundarySettings)));
        
 
 
@@ -65,6 +79,7 @@ public static class DebendencyInjection
     }
     public static IServiceCollection AddFSwaggerDocs(this IServiceCollection services)
     {
+        
         services
            .AddSwaggerGen(options =>
             {
@@ -106,9 +121,15 @@ public static class DebendencyInjection
 
                     if (group == "auth" && (groupName == "client" || groupName == "carpenter"))
                         return true;
-
+                    
+                    if (group == "Account" && (groupName == "client" || groupName == "carpenter"))
+                        return true;
+                    
+                    if (group == "Upload" && (groupName == "admin" || groupName == "carpenter"))
+                        return true;
                     return group == groupName;
                 });
+                options.MapType<JsonNode>(() => new Microsoft.OpenApi.Models.OpenApiSchema { Type = "object" });
 
                 // Global Security Requirement
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -164,7 +185,8 @@ public static class DebendencyInjection
                 ValidateLifetime = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSettings?.key!)),
                 ValidIssuer = JwtSettings?.Issuer,
-                ValidAudience = JwtSettings?.Audience
+                ValidAudience = JwtSettings?.Audience,
+                RoleClaimType = "Roles"
             };
 
 

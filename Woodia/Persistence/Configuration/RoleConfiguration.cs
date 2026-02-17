@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Woodia.Entity;
 
 public class RoleConfiguration : IEntityTypeConfiguration<ApplicationRole>
 {

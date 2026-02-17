@@ -172,5 +172,113 @@
         <member name="M:Woodia.Persistence.Migrations.editrelationbetweengovernorateandcontactinformation.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:Woodia.Persistence.Migrations.CarpenterProfile">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.CarpenterProfile.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.CarpenterProfile.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.CarpenterProfile.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.AddProductAndProductCategoryTables">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddProductAndProductCategoryTables.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddProductAndProductCategoryTables.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddProductAndProductCategoryTables.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.EditProductAndProductCategoryTables">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditProductAndProductCategoryTables.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditProductAndProductCategoryTables.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditProductAndProductCategoryTables.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.PropertyModelConfigInProduct">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.PropertyModelConfigInProduct.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.PropertyModelConfigInProduct.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.PropertyModelConfigInProduct.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.EditRelationProductCategory">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditRelationProductCategory.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditRelationProductCategory.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditRelationProductCategory.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.AddCloumnIsDeletedAndProductStatusInProduct">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddCloumnIsDeletedAndProductStatusInProduct.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddCloumnIsDeletedAndProductStatusInProduct.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddCloumnIsDeletedAndProductStatusInProduct.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.AddCloumnISDeleted">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddCloumnISDeleted.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddCloumnISDeleted.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddCloumnISDeleted.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.EditAdminPassword">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditAdminPassword.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditAdminPassword.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditAdminPassword.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.AddProfileImageUrlInCarpenterProfile">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddProfileImageUrlInCarpenterProfile.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddProfileImageUrlInCarpenterProfile.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddProfileImageUrlInCarpenterProfile.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

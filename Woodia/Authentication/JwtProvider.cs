@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Woodia.Entity;
 
 public class JwtProvider : IjwtProvider
 {

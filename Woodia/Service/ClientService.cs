@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Woodia.Entity;
 
 public class ClientService : IClientService
 {
@@ -141,7 +142,9 @@ public class ClientService : IClientService
 
     public async Task<Result<ContactInformationResponse>> AddContactInformation(string userId, ContactInformationRequest request, CancellationToken cancellationToken)
     {
-        var duplicatePhone = await _context.contactInformation.AnyAsync(x => x.PhoneNumber == request.PhoneNumber, cancellationToken);
+        var duplicatePhone = await _context
+                                    .contactInformation
+                                        .AnyAsync(x => x.PhoneNumber == request.PhoneNumber, cancellationToken);
         if (duplicatePhone)
         {
             return Result.failure<ContactInformationResponse>(UserErrors.DuplicatedPhone);

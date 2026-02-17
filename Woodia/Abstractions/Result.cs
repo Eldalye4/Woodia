@@ -1,3 +1,4 @@
+namespace Woodia.Abstractions;
 public class Result
 {
     public Result(bool isSuccess, Error error)

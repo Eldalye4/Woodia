@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [Route("me")]
 [ApiController]
-[ApiExplorerSettings(GroupName = "client")]
+[ApiExplorerSettings(GroupName = "Account")]
 [Authorize]
 public class AccountController : ControllerBase
 {
@@ -16,6 +16,7 @@ public class AccountController : ControllerBase
         _clientService = clientService;
         _logger = logger;
     }
+    [ProducesResponseType(typeof(ClientProfileResponse), StatusCodes.Status200OK)]
     [HttpGet("")]
     public async Task<IActionResult> GetProfile()
     {
@@ -46,6 +47,7 @@ public class AccountController : ControllerBase
         var result = await _clientService.VerifyEmail(User.GetUserById()!, request);
         return result.IsSuccess ? Ok() : result.ToProblem();
     }
+    [ProducesResponseType(typeof(ContactInformationResponse), StatusCodes.Status200OK)]
     [HttpPost("contact-info")]
 
     public async Task<IActionResult> AddContactInformation([FromBody] ContactInformationRequest request, CancellationToken cancellationToken)
@@ -53,6 +55,7 @@ public class AccountController : ControllerBase
         var result = await _clientService.AddContactInformation(User.GetUserById()!, request, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
+    [ProducesResponseType(typeof(ContactInformationResponse), StatusCodes.Status200OK)]
     [HttpGet("contact-info")]
     public async Task<IActionResult> GetContactInformation(CancellationToken cancellationToken)
     {

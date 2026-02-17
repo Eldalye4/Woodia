@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-
+namespace Woodia.Entity;
 public sealed class ApplicationUser : IdentityUser
 {
     public string FirstName { get; set; } = string.Empty;
@@ -9,4 +9,5 @@ public sealed class ApplicationUser : IdentityUser
     public List<RefreshToken> RefreshTokens { get; set; } = [];
 
     public ContactInformation contactInformation{ get; set; } =null!;
+    public CarpenterProfile? CarpenterProfile { get; set; } 
 }
