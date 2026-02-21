@@ -19,4 +19,7 @@ public interface IProductService
     Task<Result> EditStatusForAdminAsync(int id, ProductStatusRequest productStatusRequest,
         CancellationToken cancellationToken);
     Task<Result> DeleteForAdminAsync(int id, CancellationToken cancellationToken);
+
+    Task<Result> UpdateForAdminAsync(int id, ProductUpdateRequest productUpdateRequest,
+        CancellationToken cancellationToken);
 }

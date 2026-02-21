@@ -53,5 +53,13 @@ public class ProductController:ControllerBase
         var result=await _productService.DeleteForAdminAsync(id, cancellationToken);
         return result.IsSuccess ? NoContent() : result.ToProblem();
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, ProductUpdateRequest productUpdateRequest,
+        CancellationToken cancellationToken)
+    {
+        var result = await _productService.UpdateForAdminAsync(id, productUpdateRequest, cancellationToken);
+        return result.IsSuccess ? NoContent() : result.ToProblem();
+    }
     
 }
