@@ -1,4 +1,3 @@
-
 public static class ProductError
 {
     public static readonly Error ProductNotFound =
