@@ -24,7 +24,7 @@ public class ProductMappingConfigurations : IRegister
 
         config.NewConfig<ProductRequest, Product>()
             .Map(dest => dest.ProductLine, src => src.ProductLine)
-    
+            .Map(dest => dest.CategoryId, src => src.CategoryId )
 
    
             .Map(dest => dest.ProductImages, src =>
@@ -46,10 +46,15 @@ public class ProductMappingConfigurations : IRegister
                 .Where(x => x.ImagePlace == ImagePlace.Thumbnail)
                 .Select(x => x.Url)
                 .FirstOrDefault());
-        
-        config.NewConfig<Product,ProductDetailsResponse>()
+
+        config.NewConfig<Product, ProductDetailsResponse>()
             .Map(dest => dest.ModelConfig, src => ValidateJson(src.ModelConfig))
-            .Map(dest=>dest.Category,src=>src.Category.Name)
+            .Map(dest => dest.Category, src => src.Category.Name)
+            .Map(dest=>dest.Images,src=>src.ProductImages
+                .Where(x=>x.ImagePlace==ImagePlace.Gallery)
+                .OrderBy(x=>x.DisplayOrder)
+                .Select(x=>x.Url)
+                .ToList());
         
        config.NewConfig<Product,ProductGridItemResponse>()
            .Map(dest=>dest.ProductStatus,src=>src.ProductStatus)
