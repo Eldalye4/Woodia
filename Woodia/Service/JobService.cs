@@ -20,15 +20,7 @@ public class JobService:IJobService
 
     public async Task<Result<JobResponse>> AddAsync(string UserId,JobRequest jobRequest, CancellationToken cancellationToken)
     {
-        if (await _userManager.FindByIdAsync(UserId) is not { } user)
-        {
-            return Result.failure<JobResponse>(UserErrors.InvalidJwtToken);
-        }
-    
-        if (user.userType != UserType.Client)
-        {
-            return Result.failure<JobResponse>(JobError.NotAClient);
-        }
+        
     
         if (await _context.categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == jobRequest.CategoryId,cancellationToken) is not { } category)
         {

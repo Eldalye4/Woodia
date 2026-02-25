@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Woodia.Contract.Job;
 using Woodia.Service.Interface;
@@ -5,6 +6,7 @@ using Woodia.Service.Interface;
 namespace Woodia.Controller.Clients;
 
 [Route("api/[controller]")]
+[Authorize(Roles = "Client")]
 [ApiController]
 [ApiExplorerSettings(GroupName = "client")]
 public class JobController:ControllerBase
