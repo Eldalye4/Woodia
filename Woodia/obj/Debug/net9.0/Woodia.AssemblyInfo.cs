@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Woodia")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5f1cf37096eeafcc2a830bf31f5d4a8bb696c740")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b7b8b840a1829646271ee17ddeafe8bb710e8cb3")]
 [assembly: System.Reflection.AssemblyProductAttribute("Woodia")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Woodia")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

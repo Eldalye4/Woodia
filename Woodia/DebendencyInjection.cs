@@ -38,6 +38,7 @@ public static class DebendencyInjection
         services.AddScoped<ICarpenterService, CarpenterService>();
         services.AddScoped<Ifile, FileService>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IJobService, JobService>();
         services.AddValidatorsFromAssemblyContaining<Program>();
 
         services.AddFluentValidationAutoValidation();

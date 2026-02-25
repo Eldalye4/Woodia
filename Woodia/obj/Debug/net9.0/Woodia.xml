@@ -280,5 +280,65 @@
         <member name="M:Woodia.Persistence.Migrations.AddProfileImageUrlInCarpenterProfile.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:Woodia.Persistence.Migrations._ٍAddEntityJob">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations._ٍAddEntityJob.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations._ٍAddEntityJob.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations._ٍAddEntityJob.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.AddMigrationInTableJob">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddMigrationInTableJob.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddMigrationInTableJob.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddMigrationInTableJob.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.AddAuditableEntityinJob">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddAuditableEntityinJob.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddAuditableEntityinJob.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.AddAuditableEntityinJob.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.EditFildUpdateatAtInAuditableEntity">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditFildUpdateatAtInAuditableEntity.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditFildUpdateatAtInAuditableEntity.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.EditFildUpdateatAtInAuditableEntity.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:Woodia.Persistence.Migrations.UpdateFieldUpdateAtInAudiatble">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.UpdateFieldUpdateAtInAudiatble.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.UpdateFieldUpdateAtInAudiatble.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:Woodia.Persistence.Migrations.UpdateFieldUpdateAtInAudiatble.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

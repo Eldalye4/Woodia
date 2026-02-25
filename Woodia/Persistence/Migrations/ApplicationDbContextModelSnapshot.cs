@@ -590,6 +590,57 @@ namespace Woodia.Persistence.Migrations
                     b.ToTable("CarpenterProfiles");
                 });
 
+            modelBuilder.Entity("Woodia.Entity.Job", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DeliveryDay")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<decimal>("ExpectedBudget")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("JobStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModelConfig")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("Jobs");
+                });
+
             modelBuilder.Entity("Woodia.Entity.PortfolioItem", b =>
                 {
                     b.Property<int>("Id")
@@ -864,6 +915,17 @@ namespace Woodia.Persistence.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("Woodia.Entity.Job", b =>
+                {
+                    b.HasOne("Woodia.Entity.ApplicationUser", "ApplicationUser")
+                        .WithMany("Job")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("Woodia.Entity.PortfolioItem", b =>
                 {
                     b.HasOne("Woodia.Entity.CarpenterProfile", "CarpenterProfile")
@@ -923,6 +985,8 @@ namespace Woodia.Persistence.Migrations
             modelBuilder.Entity("Woodia.Entity.ApplicationUser", b =>
                 {
                     b.Navigation("CarpenterProfile");
+
+                    b.Navigation("Job");
 
                     b.Navigation("contactInformation")
                         .IsRequired();

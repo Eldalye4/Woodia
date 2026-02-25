@@ -10,4 +10,5 @@ public sealed class ApplicationUser : IdentityUser
 
     public ContactInformation contactInformation{ get; set; } =null!;
     public CarpenterProfile? CarpenterProfile { get; set; } 
+    public List<Job>? Job{ get; set; }
 }
