@@ -1,6 +1,8 @@
+using System.Text.Json.Nodes;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Woodia.Abstractions.Consts.ConvertJson;
 using Woodia.Contract.Job;
 using Woodia.Entity;
 using Woodia.Enums;
@@ -140,4 +142,67 @@ public class JobService:IJobService
         await _context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
+
+    public async Task<Result<PaginatedList<CarpenterJobListingResponse>>> GetAllForCarpenterAsync(RequestFilters requestFilters,CancellationToken cancellationToken)
+    {
+        var jobs = _context.Jobs.Where(x => x.JobStatus == JobStatus.Open).Join(
+            _context.categories,
+            x => x.CategoryId,
+            y => y.Id,
+            (Jobs, Categorys) => new
+            {
+                Job = Jobs,
+                CategoryName = Categorys.Name
+            }
+        ).OrderByDescending(x => x.Job.CreatedAt)
+        .Select(x=>new CarpenterJobListingResponse(
+            x.Job.Id,
+            x.Job.Title,
+            x.Job.Description,
+            x.Job.DeliveryDay,
+            x.Job.ExpectedBudget,
+            x.Job.CreatedAt,
+                x.CategoryName
+            ));
+        var response =
+            await PaginatedList<CarpenterJobListingResponse>
+                .CreateAsync(jobs, requestFilters.PageNumber, requestFilters.PageSize, cancellationToken);
+        return Result.Success(response);
+    }
+
+    public async Task<Result<CarpenterJobResponse>> GetForCarpenterAsync(int Id,CancellationToken cancellationToken)
+    {
+        
+        var jobs = await _context.Jobs.Where(x=>x.Id==Id && x.JobStatus==JobStatus.Open).Join(
+            _context.categories,
+            x => x.CategoryId,
+            y => y.Id,
+            (jobs, Categorys) => new {
+                jobs.Id,
+                jobs.ModelConfig,
+                jobs.Description,
+                jobs.DeliveryDay,
+                jobs.Title,
+                jobs.ExpectedBudget,
+                Categorys.Name,
+                jobs.CreatedAt
+            }
+        ).FirstOrDefaultAsync(cancellationToken);
+        if (jobs is null)
+        {
+            return Result.failure<CarpenterJobResponse>(JobError.JobNotFound);
+        }
+
+        var jobResponse = new CarpenterJobResponse(
+            jobs.Id,
+            ConvertStringToJson.ValidateJson(jobs.ModelConfig),
+            jobs.Description,
+            jobs.DeliveryDay,
+            jobs.Title,
+            jobs.ExpectedBudget,
+            jobs.Name,
+            jobs.CreatedAt);
+        return Result.Success(jobResponse);
+    }
+    
 }

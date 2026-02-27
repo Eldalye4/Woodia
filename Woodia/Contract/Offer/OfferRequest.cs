@@ -1,3 +1,10 @@
+
 namespace Woodia.Contract.Offer;
 
-public record OfferRequest();
+public record OfferRequest(
+    decimal Price,
+    string Description,
+    int DeliveryDay,
+    string Status
+    );
+    

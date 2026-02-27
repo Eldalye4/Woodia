@@ -16,6 +16,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Product> Products{get;set;}
     public DbSet<ProductImage> ProductImages{get;set;}
     public DbSet<Job> Jobs{get;set;}
+    public DbSet<Offer> Offers{get;set;}
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

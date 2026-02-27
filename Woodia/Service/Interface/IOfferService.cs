@@ -1,6 +1,9 @@
+using Woodia.Contract.Offer;
+
 namespace Woodia.Service.Interface;
 
-public class IOfferService
+public interface IOfferService
 {
-    
+    Task<Result<OfferResponse>> AddAsync(string CarpenterId, int jobId, OfferRequest offerRequest,
+        CancellationToken cancellationToken = default);
 }

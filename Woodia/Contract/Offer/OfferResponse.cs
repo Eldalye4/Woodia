@@ -1,7 +1,7 @@
 
 namespace Woodia.Contract.Offer;
 
-public record JobResponse(
+public record OfferResponse(
     int Id,
     string CarpenterId,
     decimal Price,

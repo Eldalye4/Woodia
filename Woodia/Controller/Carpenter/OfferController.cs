@@ -1,28 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
+using Woodia.Contract.Offer;
 using Woodia.Service.Interface;
 
 namespace Woodia.Controller.Carpenter;
 [Route("api/carpenter/[controller]")]
 [ApiController]
 [ApiExplorerSettings(GroupName = "carpenter")]
-public class JobController:ControllerBase
+public class OfferController:ControllerBase
 {
-    private readonly IJobService _jobService;
-    public JobController(IJobService jobService)
+    private readonly IOfferService _offerService ;
+    public OfferController(IOfferService offerService)
     {
-        _jobService = jobService;
+        _offerService = offerService;
     }
-    [HttpGet("available")]
-    public async Task<IActionResult> GetAll([FromRoute]RequestFilters requestFilters,CancellationToken cancellationToken)
+    [HttpPost("{jobId}")]
+    public async Task<IActionResult> Add([FromRoute] int jobId,OfferRequest offerRequest)
     {
-        var result = await _jobService.GetAllForCarpenterAsync(requestFilters, cancellationToken);
-        return result.IsSuccess? Ok(result.Value) : BadRequest(result);
-    }
-
-    [HttpGet("{Id}")]
-    public async Task<IActionResult> GetAsync(int Id, CancellationToken cancellationToken)
-    {
-        var result=await _jobService.GetForCarpenterAsync(Id, cancellationToken);
+        var result = await _offerService.AddAsync(User.GetUserById()!, jobId, offerRequest);
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
+ 
 }

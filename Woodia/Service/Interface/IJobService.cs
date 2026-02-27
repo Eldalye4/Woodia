@@ -17,4 +17,9 @@ public interface IJobService
     Task<Result> InProgressStateAsync(string clientID, int Id, CancellationToken cancellationToken);
     Task<Result> CompleteStateAsync(string clientID, int Id, CancellationToken cancellationToken);
     Task<Result> CanceleStateAsync(string clientID, int Id, CancellationToken cancellationToken);
+
+    Task<Result<PaginatedList<CarpenterJobListingResponse>>> GetAllForCarpenterAsync(RequestFilters requestFilters,
+        CancellationToken cancellationToken);
+
+    Task<Result<CarpenterJobResponse>> GetForCarpenterAsync(int Id, CancellationToken cancellationToken);
 }

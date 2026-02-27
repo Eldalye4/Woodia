@@ -14,4 +14,5 @@ public class Job:AuditableEntity
     public JobStatus JobStatus{get;set;}= JobStatus.Open;
     public int CategoryId{get;set;}
     public ApplicationUser ApplicationUser{get;set;}=null!;
-  }
+    public List<Offer> Offers { get; set; } = [];
+}
