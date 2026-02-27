@@ -3,7 +3,7 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDependecy(builder.Configuration);
 var app = builder.Build();
-
+app.MapGet("/health-check", () => Results.Ok());
 if (app.Environment.IsProduction())
 {
     app.MapOpenApi();
