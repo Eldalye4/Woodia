@@ -8,7 +8,7 @@ public record CarpenterJobResponse(
     string Description,
     int DeliveryDay,
     string Title,
-    decimal ExpectedBudget,
+    decimal? ExpectedBudget,
     string CategoryName,
     DateTime CreatedAt
     );

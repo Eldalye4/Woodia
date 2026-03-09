@@ -5,7 +5,7 @@ public record JoblistingResponse(
     string Title,
     string Description,
     int DeliveryDay,
-    decimal ExpectedBudget,
+    decimal? ExpectedBudget,
     string JobStatus,
     DateTime CreatedAt,
     DateTime? UpdatedAt

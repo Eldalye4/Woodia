@@ -9,7 +9,7 @@ public class Job:AuditableEntity
     public string Description{get;set;} = string.Empty;
     public int DeliveryDay{get;set;}
     public string Title{get;set;} = string.Empty;
-    public decimal ExpectedBudget{get;set;} 
+    public decimal? ExpectedBudget{get;set;} 
     public string ClientId{get;set;} = string.Empty;
     public JobStatus JobStatus{get;set;}= JobStatus.Open;
     public int CategoryId{get;set;}

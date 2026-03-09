@@ -7,7 +7,7 @@ public record JobRequest(
     string Description,
     int DeliveryDay,
     string Title,
-    decimal ExpectedBudget,
+    decimal? ExpectedBudget,
     
     int CategoryId
     );
