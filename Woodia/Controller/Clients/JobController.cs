@@ -12,9 +12,11 @@ namespace Woodia.Controller.Clients;
 public class JobController:ControllerBase
 {
     private readonly IJobService _jobService;
-    public JobController(IJobService jobService)
+    private readonly IOfferService _offerService;
+    public JobController(IJobService jobService, IOfferService offerService)
     {
         _jobService = jobService;
+        _offerService = offerService;
     }
     [HttpPost("")]
     public async Task<IActionResult> Add(JobRequest request,CancellationToken cancellationToken)
@@ -63,6 +65,8 @@ public class JobController:ControllerBase
         var result =await _jobService.InProgressStateAsync(User.GetUserById()!, Id, cancellationToken);
         return result.IsSuccess?NoContent():result.ToProblem();
     }
+
+    
     
     
 }

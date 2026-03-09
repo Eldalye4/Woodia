@@ -82,6 +82,15 @@ public class JobService:IJobService
     public async Task<Result> UpdateAsync(string clientID,int Id, JobRequest jobRequest,
         CancellationToken cancellationToken)
     {
+        if (await _context.categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == jobRequest.CategoryId,cancellationToken) is not { } category)
+        {
+            return Result.failure<JobResponse>(CategoryError.CategoryNotFound);
+        }
+    
+        if (category.ParentId == null)
+        {
+            return Result.failure<JobResponse>(JobError.CannotLinkToParent);
+        }
         var job = await _context.Jobs.FirstOrDefaultAsync(x => x.Id == Id  && x.ClientId==clientID,cancellationToken);
         if (job is null)
         {

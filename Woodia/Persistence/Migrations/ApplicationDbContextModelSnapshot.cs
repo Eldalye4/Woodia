@@ -616,7 +616,7 @@ namespace Woodia.Persistence.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<decimal>("ExpectedBudget")
+                    b.Property<decimal?>("ExpectedBudget")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("JobStatus")

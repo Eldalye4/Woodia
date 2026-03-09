@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using CloudinaryDotNet;
 using Mapster;
+using Woodia.Abstractions.Consts.ConvertJson;
 using Woodia.Contract.Carpenter;
 using Woodia.Contract.Job;
 using Woodia.Contract.Product;
@@ -17,27 +18,13 @@ public class JobMappingConfigurations : IRegister
 
         config.NewConfig<Job, JobResponse>()
             .Map(dest => dest.JobStatus, src => src.JobStatus)
-            .Map(dest => dest.ModelConfig, src => ValidateJson(src.ModelConfig))
+            .Map(dest => dest.ModelConfig, src => ConvertStringToJson.ValidateJson(src.ModelConfig))
             .Map(dest=>dest.UpdatedAt,src=>src.UpdateAt);
         config.NewConfig<Job, JoblistingResponse>()
             .Map(dest => dest.UpdatedAt, src => src.UpdateAt);
 
     }
 
-    private static JsonNode ValidateJson(string jsonٍstirng)
-    {
-        if (string.IsNullOrWhiteSpace(jsonٍstirng))
-        {
-            return null;
-        }
-
-        try
-        {
-            return JsonNode.Parse(jsonٍstirng);
-        }
-        catch 
-        {
-            return null;
-        }
-    }
+   
+    
 }

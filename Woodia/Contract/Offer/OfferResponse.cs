@@ -7,4 +7,5 @@ public record OfferResponse(
     decimal Price,
     string Description,
     int DeliveryDay,
-    string Status);
+    string Status
+    ,DateTime CreatedAt);
