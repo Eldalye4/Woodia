@@ -31,30 +31,45 @@ public class CarpenterService:ICarpenterService
         }
         var ProfessionalProfile = professionalProfile.Adapt<CarpenterProfile>();
         ProfessionalProfile.UserId=userId;
+        user.PhotoUrl = professionalProfile.ProfileImageUrl;
+        
         await _context.CarpenterProfiles.AddAsync(ProfessionalProfile);
+        await _userManager.UpdateAsync(user);
         await _context.SaveChangesAsync();
-        return Result.Success(ProfessionalProfile.Adapt<ProfessionalProfileResponse>());
+        var response = new ProfessionalProfileResponse(ProfessionalProfile.Id, ProfessionalProfile.HourlyRate,
+            ProfessionalProfile.ProfileOverview, user.PhotoUrl);
+        return Result.Success(response);
     }
     public async Task<Result> UpdateProfessionalProfile(string userId, ProfessionalProfileRequest professionalProfile)
     {
-        if (await _context.CarpenterProfiles.FirstOrDefaultAsync(x => x.UserId == userId) is not { } carpenterProfile)
+        if (await _userManager.FindByIdAsync(userId) is not { } user)
         {
             return Result.failure(UserErrors.InvalidJwtToken);
         }
+        if (await _context.CarpenterProfiles.FirstOrDefaultAsync(x => x.UserId == userId) is not { } carpenterProfile)
+        {
+            return Result.failure(CarpenterError.ProfileNotFound);
+        }
 
         professionalProfile.Adapt(carpenterProfile);
+        user.PhotoUrl = professionalProfile.ProfileImageUrl;
+        await _userManager.UpdateAsync(user);
         await _context.SaveChangesAsync();
         return Result.Success();
     }
 
     public async Task<Result<ProfessionalProfileResponse>> GetProfessionalProfile(string userId)
     {
-        if (await _context.CarpenterProfiles.FirstOrDefaultAsync(x => x.UserId == userId) is not { } carpenterProfile)
+        
+        
+        if (await _context.CarpenterProfiles.Include(x=>x.ApplicationUser).FirstOrDefaultAsync(x => x.UserId == userId) is not { } carpenterProfile)
         {
-            return Result.failure<ProfessionalProfileResponse>(UserErrors.InvalidJwtToken);
+            return Result.failure<ProfessionalProfileResponse>(CarpenterError.ProfileNotFound);
         }
+        var response = new ProfessionalProfileResponse(carpenterProfile.Id, carpenterProfile.HourlyRate,
+            carpenterProfile.ProfileOverview, carpenterProfile.ApplicationUser.PhotoUrl!);
 
-        return Result.Success(carpenterProfile.Adapt<ProfessionalProfileResponse>());
+        return Result.Success(response);
         
     }
 

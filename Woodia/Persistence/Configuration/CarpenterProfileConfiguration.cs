@@ -16,10 +16,7 @@ public class CarpenterProfileConfiguration:IEntityTypeConfiguration<CarpenterPro
 
         builder.Property(x => x.HourlyRate)
             .HasPrecision(18, 2);
-        builder.Property(x=>x.ProfileImageUrl)
-            .HasMaxLength(500)
-            .IsRequired();
-
+        
 
     }
 }

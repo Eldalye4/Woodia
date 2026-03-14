@@ -11,6 +11,8 @@ public static class CarpenterError
     
     public static readonly Error PortfolioItemNotFound =
         new("PortfolioItem.NotFound", "No PortfolioItem was found with the given ID", StatusCodes.Status404NotFound);
+    public static readonly Error ProfileNotFound= new
+        ("Profile.ProfileNotFound", "The requested Profile was not found.", StatusCodes.Status404NotFound);
 
 
 }

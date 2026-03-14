@@ -49,10 +49,6 @@ public class MappingConfigurations : IRegister
 
         config.NewConfig<CategoryRequest, Category>()
             .Map(src => src.ImageUrl, dest => dest.ImageThumbnail);
-        config.NewConfig<ProfessionalProfileRequest, CarpenterProfile>()
-            .Map(dest => dest.ProfileImageUrl, src => src.ProfileImageUrl);
         
-        config.NewConfig<CarpenterProfile,ProfessionalProfileResponse>()
-            .Map(dest => dest.ProfileImageUrl, src => src.ProfileImageUrl);
     }
 }

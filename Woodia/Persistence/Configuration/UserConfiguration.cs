@@ -24,6 +24,9 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 
         builder.Property(x => x.FirstName).HasMaxLength(100);
         builder.Property(x => x.LastName).HasMaxLength(100);
+        builder.Property(x => x.PhotoUrl)
+            .HasMaxLength(500);
+
         builder.HasData(new ApplicationUser
         {
             Id = DefaultUsers.AdminId,
@@ -37,7 +40,8 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
             ConcurrencyStamp = DefaultUsers.AdminConcurrencyStamp,
             EmailConfirmed = true,
             userType = DefaultUsers.userType,
-            PasswordHash=DefaultUsers.AdminPassword
+            PasswordHash=DefaultUsers.AdminPassword,
+            PhotoUrl = null
 
         });
     }
