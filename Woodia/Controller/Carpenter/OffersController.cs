@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Woodia.Contract.Offer;
 using Woodia.Service.Interface;
@@ -5,6 +6,7 @@ using Woodia.Service.Interface;
 namespace Woodia.Controller.Carpenter;
 [Route("api/carpenter/[controller]")]
 [ApiController]
+[Authorize(Roles = "Carpenter")]
 [ApiExplorerSettings(GroupName = "carpenter")]
 public class OffersController:ControllerBase
 {
