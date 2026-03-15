@@ -86,7 +86,8 @@ public class CategoryService : ICategory
     public async Task<Result<AdminCategoryResponse>> AddForAdminAsync(CategoryRequest categoryRequest,
         CancellationToken cancellationToken)
     {
-        if (!await _context.categories.AnyAsync(x => x.Id == categoryRequest.ParentId, cancellationToken))
+        
+        if (categoryRequest.ParentId != null && !await _context.categories.AnyAsync(x => x.Id == categoryRequest.ParentId , cancellationToken))
         {
             return Result.failure<AdminCategoryResponse>(CategoryError.ParentCategoryNotFound);
         }
