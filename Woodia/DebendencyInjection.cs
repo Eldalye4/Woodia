@@ -41,6 +41,7 @@ public static class DebendencyInjection
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<IOfferService, OfferService>();
         services.AddValidatorsFromAssemblyContaining<Program>();
+        services.AddHttpClient<ITranlationService, TranslationService>();
 
         services.AddFluentValidationAutoValidation();
 
