@@ -72,8 +72,7 @@ public class ProductService:IProductService
     {
         var categorys = new List<int>();
         
-        // parent category
-        if (await _context.categories.AsNoTracking().Include(x=>x.SubCategories).FirstOrDefaultAsync(x => x.Slug == slug) is not { } category)
+        if (await _context.categories.AsNoTracking().Include(x=>x.SubCategories).FirstOrDefaultAsync(x => x.SlugAr == slug|| x.SlugEn==slug) is not { } category)
         {
             return Result.failure<PaginatedList<ProductListingResponse>>(CategoryError.CategoryNotFound);
 
@@ -106,8 +105,9 @@ public class ProductService:IProductService
         
 
         var product =await _context.Products.Where(x=>x.ProductStatus==ProductStatus.Published)
-            .Include(x=>x.Category)
-            .Include(x=>x.ProductImages)
+            
+            .Include(x => x.Category)
+            .Include(x => x.ProductImages)
             .FirstOrDefaultAsync(x => x.Id == id);
         if (product == null)
         {
@@ -170,7 +170,8 @@ public class ProductService:IProductService
             return Result.failure<ProductResponse>(ProductError.ProductNotFound);
         }
         product.CategoryId=productUpdateRequest.CategoryId;
-        product.Description=productUpdateRequest.Description;
+        product.DescriptionAr=productUpdateRequest.DescriptionAr;
+        product.DescriptionEn=productUpdateRequest.DescriptionEn;
         product.ModelConfig = productUpdateRequest.ModelConfig.ToString();
         product.ProductLine = Enum.Parse<ProductLine>( productUpdateRequest.ProductLine,true);
             

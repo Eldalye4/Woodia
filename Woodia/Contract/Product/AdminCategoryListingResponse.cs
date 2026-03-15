@@ -2,7 +2,9 @@ namespace Woodia.Contract.Product;
 
 public record AdminCategoryListingResponse(
     int CategoryId,
-    string Slug,
-    string CategoryName,
+    string SlugAr,
+    string SlugEn,
+    string NameAr,
+    string NameEn,
     string ImageThumbnail
     );

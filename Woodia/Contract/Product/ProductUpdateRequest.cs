@@ -4,7 +4,8 @@ namespace Woodia.Contract.Product;
 
 public record ProductUpdateRequest(
     string ProductLine,
-    string Description,
+    string DescriptionAr,
+    string DescriptionEn,
     JsonNode ModelConfig,
     List<ProductImageDto> ProductImage,
     int CategoryId);

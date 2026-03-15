@@ -43,8 +43,14 @@ app.MapScalarApiReference("/scalar/carpenter", options =>
         .WithOpenApiRoutePattern("/swagger/carpenter/swagger.json");
 });
 
-app.UseCors();
 app.UseExceptionHandler();
+var supportedCultures = new[] { "en", "ar" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("ar")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+app.UseRequestLocalization(localizationOptions);
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

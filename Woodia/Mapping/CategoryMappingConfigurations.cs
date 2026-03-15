@@ -13,9 +13,12 @@ public class CategoryMappingConfigurations : IRegister
     {
         config.NewConfig<Category, AdminCategoryListingResponse>()
             .Map(dest => dest.ImageThumbnail, src => src.ImageUrl)
-            .Map(dest => dest.CategoryName, src => src.ParentId != null
-                ? $"{src.Parent.Name} >> {src.Name}"
-                : src.Name)
+            .Map(dest => dest.NameAr, src => src.ParentId != null
+                ? $"{src.Parent.NameAr} >> {src.NameAr}"
+                : src.NameAr)
+            .Map(dest => dest.NameEn, src => src.ParentId != null
+                ? $"{src.Parent.NameEn} >> {src.NameEn}"
+                : src.NameEn)
             .Map(x=>x.CategoryId, src => src.Id);
     }
 }

@@ -5,7 +5,8 @@ namespace Woodia.Contract.Product;
 
 public record ProductRequest(
     string ProductLine,
-    string Description,
+    string DescriptionAr,
+    string DescriptionEn,
     JsonNode ModelConfig,
     List<ProductImageRequest> ProductImage,
     int CategoryId);

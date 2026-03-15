@@ -1,4 +1,5 @@
 
+using System.Globalization;
 using CloudinaryDotNet;
 using Mapster;
 using Woodia.Contract.Carpenter;
@@ -19,13 +20,44 @@ public class MappingConfigurations : IRegister
 
 
         config.NewConfig<Category, CategoryResponse>()
-        .Map(dest => dest.ChildCategory, src => src.SubCategories);
-
+        .Map(dest => dest.ChildCategory, src => src.SubCategories)
+        .Map(dest=>dest.Name,src=>
+                CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar") ?src.NameAr:src.NameEn)
+        .Map(dest=>dest.Slug,src=>
+                CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar") ?src.SlugAr:src.SlugEn);
+        config.NewConfig<Category,CategoryChildResponse>()
+            .Map(dest=>dest.Name,src=>
+                CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar") ?src.NameAr:src.NameEn)
+            .Map(dest=>dest.Slug,src=>
+                CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar") ?src.SlugAr:src.SlugEn);
+            
+    
         config.NewConfig<Category, CategoryNavigationResponse>()
         .Map(dest => dest.CategoryChildNavigationResponses,
                  src => src.ParentId == null ?
-                src.SubCategories : src.Parent!.SubCategories);
+                src.SubCategories : src.Parent!.SubCategories)
+        .Map(dest=>dest.Name,src=>CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar") ?src.NameAr:src.NameEn);
 
+        config.NewConfig<Category, CategoryChildNavigationResponse>()
+            .Map(dest => dest.Name,
+                src => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar")
+                    ? src.NameAr
+                    : src.NameEn)
+            .Map(dest => dest.Slug,
+                src => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar")
+                    ? src.SlugAr
+                    : src.SlugEn);
+        
+        config.NewConfig<Category,CategoryParentResponse>()
+            .Map(dest => dest.Name,
+                src => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar")
+                    ? src.NameAr
+                    : src.NameEn)
+            .Map(dest => dest.Slug,
+                src => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar")
+                    ? src.SlugAr
+                    : src.SlugEn);
+        
         config.NewConfig<ApplicationUser, ContactInformationResponse>()
         .Map(dest => dest.UserId, src => src.Id)
         .Map(dest => dest.AdditionalInfo, src => src.contactInformation.AdditionalInfo)
@@ -45,7 +77,8 @@ public class MappingConfigurations : IRegister
                 src=>src.Parent);
         config.NewConfig<Category, ParentCategoryResponse>()
             .Map(src => src.Id, dest => dest.Id)
-            .Map(dest => dest.Name, src => src.Name);
+            .Map(dest => dest.NameAr, src => src.NameAr)
+            .Map(dest => dest.NameEn, src => src.NameEn);
 
         config.NewConfig<CategoryRequest, Category>()
             .Map(src => src.ImageUrl, dest => dest.ImageThumbnail);

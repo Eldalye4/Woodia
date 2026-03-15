@@ -12,7 +12,11 @@ public class ProductConfiguration:IEntityTypeConfiguration<Product>
         builder.HasOne(x=>x.Category)
             .WithMany(x=>x.Products)
             .HasForeignKey(x=>x.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.Property(x => x.DescriptionAr)
+            .HasMaxLength(500);
+        builder.Property(x => x.DescriptionEn)
+            .HasMaxLength(500);
         builder.Property(x => x.ModelConfig)
             .IsRequired();
         builder.HasQueryFilter(x=>!x.IsDeleted);

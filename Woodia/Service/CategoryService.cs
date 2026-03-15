@@ -26,7 +26,7 @@ public class CategoryService : ICategory
     public async Task<Result<CategoryNavigationResponse>> GetNavigation(string slug, CancellationToken cancellationToken)
     {
         var category = await _context.categories
-            .Where(x => x.Slug == slug  )
+            .Where(x => x.SlugAr == slug || x.SlugEn==slug )
                     .Include(x => x.SubCategories)
 
                     .Include(x => x.Parent)
@@ -86,6 +86,10 @@ public class CategoryService : ICategory
     public async Task<Result<AdminCategoryResponse>> AddForAdminAsync(CategoryRequest categoryRequest,
         CancellationToken cancellationToken)
     {
+        if (!await _context.categories.AnyAsync(x => x.Id == categoryRequest.ParentId, cancellationToken))
+        {
+            return Result.failure<AdminCategoryResponse>(CategoryError.ParentCategoryNotFound);
+        }
         var category =  categoryRequest.Adapt<Category>();
         await _context.categories.AddAsync(category,cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);

@@ -161,7 +161,7 @@ public class JobService:IJobService
             (Jobs, Categorys) => new
             {
                 Job = Jobs,
-                CategoryName = Categorys.Name
+                CategoryName = Categorys.NameAr
             }
         ).OrderByDescending(x => x.Job.CreatedAt)
         .Select(x=>new CarpenterJobListingResponse(
@@ -193,7 +193,7 @@ public class JobService:IJobService
                 jobs.DeliveryDay,
                 jobs.Title,
                 jobs.ExpectedBudget,
-                Categorys.Name,
+                Name = Categorys.NameAr,
                 jobs.CreatedAt
             }
         ).FirstOrDefaultAsync(cancellationToken);
