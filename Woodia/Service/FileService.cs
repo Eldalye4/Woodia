@@ -6,11 +6,11 @@ using Woodia.Service.Interface;
 
 namespace Woodia.Service;
 
-public class FileService:Ifile
+public class FileService : Ifile
 {
-    
+
     private readonly Cloudinary _cloudinary;
-    private readonly CloundarySettings _cloundarySettings ;
+    private readonly CloundarySettings _cloundarySettings;
 
     public FileService(IOptions<CloundarySettings> cloundarySettings)
     {
@@ -19,9 +19,9 @@ public class FileService:Ifile
         _cloudinary = new Cloudinary(account);
         _cloudinary.Api.Secure = true;
     }
-    
-    
-    
+
+
+
     public async Task<List<string>> UploadManyFile(IFormFileCollection files, CancellationToken cancellationToken)
     {
         List<string> url = [];
@@ -32,25 +32,41 @@ public class FileService:Ifile
             var result = await UploadFile(file, cancellationToken);
             url.Add(result);
         }
+
         return url;
     }
+
     private async Task<string> UploadFile(IFormFile file, CancellationToken cancellationToken)
     {
         using var memoryStream = new MemoryStream();
         await file.CopyToAsync(memoryStream, cancellationToken);
         memoryStream.Position = 0;
-        var uploadparams = new ImageUploadParams
+        var fileDescription = new FileDescription(file.FileName, memoryStream);
+
+        if (file.ContentType.StartsWith("video/"))
         {
-            File = new FileDescription(file.FileName, memoryStream),
-        };
+            var uploadParams = new VideoUploadParams
+            {
+                File = fileDescription,
+            };
 
+            var result =
+                await _cloudinary.UploadLargeAsync(uploadParams, 6000000, cancellationToken: cancellationToken);
 
-        var result = _cloudinary.Upload(uploadparams);
+            if (result.Error != null)
+                throw new Exception($"Cloudinary error: {result.Error.Message}");
 
-        if (result.Error != null)
-        {
-            throw new Exception($"Cloudinary error occured: {result.Error.Message}");
+            return result.SecureUrl.ToString();
         }
-        return result.SecureUrl.ToString();
+        else
+        {
+            var uploadParams = new ImageUploadParams { File = fileDescription };
+            var result = await _cloudinary.UploadAsync(uploadParams, cancellationToken);
+
+            if (result.Error != null)
+                throw new Exception($"Cloudinary error: {result.Error.Message}");
+
+            return result.SecureUrl.ToString();
+        }
     }
 }
