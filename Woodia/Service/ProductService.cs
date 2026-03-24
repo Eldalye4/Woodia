@@ -215,4 +215,14 @@ public class ProductService:IProductService
         
         return Result.Success();
     }
+
+    public async Task<Result<List<ProductListingResponse>>> GetMostLovedAsync(CancellationToken cancellationToken)
+    {
+        var product = await _context.Products
+            .OrderByDescending(x => x.JobsCount)
+            .Take(10)
+            .ProjectToType<ProductListingResponse>()
+            .ToListAsync(cancellationToken);
+        return Result.Success(product);
+    }
 }

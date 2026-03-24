@@ -771,6 +771,9 @@ namespace Woodia.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("JobsCount")
+                        .HasColumnType("int");
+
                     b.Property<string>("ModelConfig")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

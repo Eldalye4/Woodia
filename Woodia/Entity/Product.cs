@@ -7,6 +7,7 @@ public class Product
     public int Id { get; set; }
     public ProductLine ProductLine{get;set;}
     public int CategoryId{get;set;}
+    public int JobsCount{get;set;}
     public  string DescriptionAr { get; set; }=string.Empty;
     public  string DescriptionEn { get; set; }=string.Empty;
     public string ModelConfig{get;set;}=string.Empty;

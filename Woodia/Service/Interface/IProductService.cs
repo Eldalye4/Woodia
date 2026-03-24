@@ -22,4 +22,6 @@ public interface IProductService
 
     Task<Result> UpdateForAdminAsync(int id, ProductUpdateRequest productUpdateRequest,
         CancellationToken cancellationToken);
+
+    Task<Result<List<ProductListingResponse>>> GetMostLovedAsync(CancellationToken cancellationToken);
 }
