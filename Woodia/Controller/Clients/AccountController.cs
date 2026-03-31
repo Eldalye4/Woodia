@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Woodia.Contract.Client;
 
 [Route("me")]
 [ApiController]
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 [Authorize]
 public class AccountController : ControllerBase
 {
+    
     private readonly IClientService _clientService;
     private readonly ILogger<AccountController> _logger;
 
@@ -28,6 +30,20 @@ public class AccountController : ControllerBase
     {
         await _clientService.UpdateProfile(User.GetUserById()!, profileRequest);
         return NoContent();
+    }
+    
+    [HttpPost("profile-image")]
+    public async Task<IActionResult> AddProfileImage([FromBody] ImageProfileRequest imageProfileRequest)
+    {
+        var result= await _clientService.AddImage(User.GetUserById()!, imageProfileRequest);
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
+    }
+
+    [HttpPut("profile-image")]
+    public async Task<IActionResult> EditProfileImage([FromBody] ImageProfileRequest imageProfileRequest)
+    {
+        var result = await _clientService.UpdateImage(User.GetUserById()!, imageProfileRequest);
+        return result.IsSuccess ? Ok() : result.ToProblem();
     }
     [HttpPost("change-email")]
     public async Task<IActionResult> ChangeEmail([FromBody] EmailUpdateRequest request)

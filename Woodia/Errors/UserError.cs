@@ -34,4 +34,5 @@ public static class UserErrors
        new("GoogleToken.Invalid", "Invalid Google Token", StatusCodes.Status401Unauthorized);
        public static readonly Error InvalidFacebookToken =
        new("FacebookToken.Invalid", "Invalid Facebook Token", StatusCodes.Status401Unauthorized);
-}
+
+       }

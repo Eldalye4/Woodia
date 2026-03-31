@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Woodia.Contract.Client;
 using Woodia.Entity;
 
 public class ClientService : IClientService
@@ -35,6 +36,48 @@ public class ClientService : IClientService
 
         return Result.Success(user);
 
+    }
+
+    public async Task<Result<ImageProfileResponse>> AddImage(string userId,ImageProfileRequest profileRequest)
+    {
+        if (await _userManager.FindByIdAsync(userId) is not { } user)
+        {
+            return Result.failure<ImageProfileResponse>(UserErrors.InvalidCredentials);
+        }
+
+        if (user.PhotoUrl != null)
+        {
+            return Result.failure<ImageProfileResponse>(ClientProfileError.PhotoAlreadyExists);
+        }
+        user.PhotoUrl = profileRequest.photoUrl;
+        var result=await _userManager.UpdateAsync(user);
+        
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.First();
+            return Result.failure<ImageProfileResponse>(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
+
+        }
+        return Result.Success(user.Adapt<ImageProfileResponse>());
+    }
+
+    public async Task<Result> UpdateImage(string userId, ImageProfileRequest profileRequest)
+    {
+        if (await _userManager.FindByIdAsync(userId) is not { } user)
+        {
+            return Result.failure(UserErrors.InvalidCredentials);
+        }
+        user.PhotoUrl = profileRequest.photoUrl;
+        var result=await _userManager.UpdateAsync(user);
+        
+        if (!result.Succeeded)
+        {
+            var error = result.Errors.First();
+            return Result.failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
+
+        }
+
+        return Result.Success();
     }
     public async Task<Result> UpdateProfile(string userId, ProfileRequest request)
     {

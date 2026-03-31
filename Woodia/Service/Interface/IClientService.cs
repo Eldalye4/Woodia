@@ -1,3 +1,5 @@
+using Woodia.Contract.Client;
+
 public interface IClientService
 {
     Task<Result<ClientProfileResponse>> GetProfile(String UserId);
@@ -8,4 +10,8 @@ public interface IClientService
     Task<Result<ContactInformationResponse>> AddContactInformation(string userId, ContactInformationRequest request, CancellationToken cancellationToken);
     Task<Result<ContactInformationResponse>> GetContactInformation(string userId, CancellationToken cancellationToken);
     Task<Result> UpdateContactInformation(string userId, ContactInformationRequest request, CancellationToken cancellationToken);
+
+    Task<Result> UpdateImage(string userId, ImageProfileRequest profileRequest);
+    Task<Result<ImageProfileResponse>> AddImage(string userId, ImageProfileRequest profileRequest);
+
 }
