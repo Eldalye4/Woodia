@@ -5,9 +5,9 @@ using Woodia.Service.Interface;
 
 namespace Woodia.Controller.Admin;
 [Route("admin/[controller]")]
-[Authorize(Roles = "Admin")]
 [ApiExplorerSettings(GroupName = "Upload")]
 [ApiController]
+[Authorize]
 public class UploadController:ControllerBase
 {
     private readonly Ifile _file;
