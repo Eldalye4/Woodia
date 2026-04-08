@@ -20,4 +20,5 @@ RUN dotnet publish "Woodia.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:Us
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "Woodia.dll"]
