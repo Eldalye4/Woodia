@@ -32,7 +32,7 @@ public static class DebendencyInjection
         services.AddScoped<IGovernorateService, GovernorateService>();
         services.AddScoped<IClientService, ClientService>();
         services.AddSingleton<IjwtProvider, JwtProvider>();
-        services.AddScoped<IEmailSender, EmailService>();
+        services.AddScoped<IEmailSender, EmailGoogleService>();
         services.AddScoped<EncryptionHelper>();
         services.AddScoped<ICategory, CategoryService>();
         services.AddScoped<ICarpenterService, CarpenterService>();
@@ -57,6 +57,7 @@ public static class DebendencyInjection
         services.Configure<GoogleSettings>(configuration.GetSection(nameof(GoogleSettings)));
         services.Configure<FacebookSettings>(configuration.GetSection(nameof(FacebookSettings)));
         services.Configure<CloundarySettings>(configuration.GetSection(nameof(CloundarySettings)));
+        services.Configure<EmailGoogleSetting>(configuration.GetSection(nameof(EmailGoogleSetting)));
        
 
 

@@ -24,8 +24,7 @@ public class ProductMappingConfigurations : IRegister
             .Map(dest => dest.ProductImageResponses, src => src.ProductImages.OrderBy(x => x.DisplayOrder))
             .Map(dest => dest.CategoryProductResponses, src => src.Category)
             .Map(dest => dest.ModelConfig, src => ValidateJson(src.ModelConfig));
-            
-
+        
 
         config.NewConfig<ProductRequest, Product>()
             .Map(dest => dest.ProductLine, src => src.ProductLine)
