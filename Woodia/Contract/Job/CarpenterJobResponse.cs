@@ -10,5 +10,6 @@ public record CarpenterJobResponse(
     string Title,
     decimal? ExpectedBudget,
     string CategoryName,
+    JobClientBriefDto jobClientBriefDto,
     DateTime CreatedAt
     );

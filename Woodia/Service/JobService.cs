@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json.Nodes;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
@@ -195,16 +196,22 @@ public class JobService:IJobService
                 jobs.Description,
                 jobs.DeliveryDay,
                 jobs.Title,
+                jobs.ApplicationUser.FirstName,
+                jobs.ApplicationUser.LastName,
+                jobs.ApplicationUser.PhotoUrl,
+                GovernorateName =  CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar")? 
+                    jobs.ApplicationUser.contactInformation.governorate.NameAr:
+                    jobs.ApplicationUser.contactInformation.governorate.NameEn,
                 jobs.ExpectedBudget,
                 Name = Categorys.NameAr,
                 jobs.CreatedAt
             }
         ).FirstOrDefaultAsync(cancellationToken);
+        
         if (jobs is null)
         {
             return Result.failure<CarpenterJobResponse>(JobError.JobNotFound);
         }
-
         var jobResponse = new CarpenterJobResponse(
             jobs.Id,
             ConvertStringToJson.ValidateJson(jobs.ModelConfig),
@@ -213,6 +220,7 @@ public class JobService:IJobService
             jobs.Title,
             jobs.ExpectedBudget,
             jobs.Name,
+            new JobClientBriefDto(jobs.FirstName,jobs.LastName,jobs.PhotoUrl,jobs.GovernorateName),
             jobs.CreatedAt);
         return Result.Success(jobResponse);
     }
