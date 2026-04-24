@@ -25,7 +25,8 @@ public class OfferMappingConfigurations : IRegister
             .Map(dest => dest.JobSummary, src => src.Job);
         config.NewConfig<Job, JobSummaryDto>()
             .Map(dest => dest.JobStatus, src => src.JobStatus)
-            .Map(dest => dest.ModelConfig, src => ConvertStringToJson.ValidateJson(src.ModelConfig));
+            .Map(dest => dest.ModelConfig, src => ConvertStringToJson.ValidateJson(src.ModelConfig))
+            .Map(dest=>dest.Id,src=>src.Id);
 
         config.NewConfig<Offer, JobOfferSummaryResponse>()
             .Map(dest => dest.Status, src => src.Status)

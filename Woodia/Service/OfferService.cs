@@ -38,10 +38,16 @@ public class OfferService:IOfferService
 
     public async Task<Result<PaginatedList<OfferSummaryResponse>>> GetAllAsync(RequestFilters requestFilters,string carpenterId, CancellationToken cancellationToken=default)
     {
+        OfferStatus? parsedStatus=null;
+        if (!string.IsNullOrEmpty(requestFilters.SearchValue) &&
+            Enum.TryParse<OfferStatus>(requestFilters.SearchValue, ignoreCase:true,out var status))
+        {
+            parsedStatus=status;
+        }
         var offers = _context.Offers
             .Include(x=>x.Job)
             .OrderByDescending(x=>x.CreatedAt)
-            .Where(x => x.CarpenterId == carpenterId)
+            .Where(x => x.CarpenterId == carpenterId && (!parsedStatus.HasValue||x.Status==parsedStatus.Value ))
             .ProjectToType<OfferSummaryResponse>();
         var response =
             await PaginatedList<OfferSummaryResponse>

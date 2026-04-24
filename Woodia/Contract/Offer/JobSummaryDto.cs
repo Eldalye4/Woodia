@@ -4,7 +4,7 @@ namespace Woodia.Contract.Offer;
 
 public record JobSummaryDto
 (
-    
+    int Id,
     JsonNode ModelConfig,
     string Description,
     int DeliveryDay,
