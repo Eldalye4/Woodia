@@ -332,7 +332,7 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
                 IsComplete = false;
             }
         }
-        return new AuthRespond(user.Id, user.Email, user.FirstName, user.LastName, user.userType.ToString(), token, expiresIn, refreshToken, refreshTokenExpiration,IsComplete);
+        return new AuthRespond(user.Id, user.Email, user.FirstName, user.LastName, user.PhotoUrl,user.userType.ToString(), token, expiresIn, refreshToken, refreshTokenExpiration,IsComplete);
     }
 
 
