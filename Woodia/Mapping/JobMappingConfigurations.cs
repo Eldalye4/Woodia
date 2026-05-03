@@ -15,6 +15,8 @@ public class JobMappingConfigurations : IRegister
         TypeAdapterConfig<JsonNode, JsonNode>.NewConfig().MapWith(src => src);
         config.NewConfig<JobRequest, Job>()
             .Map(dest => dest.ModelConfig, src => src.ModelConfig.ToString());
+        config.NewConfig<JobUpdateRequest, Job>()
+            .Map(dest => dest.ModelConfig, src => src.ModelConfig.ToString());
 
         config.NewConfig<Job, JobResponse>()
             .Map(dest => dest.JobStatus, src => src.JobStatus)

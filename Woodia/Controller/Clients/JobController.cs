@@ -40,7 +40,7 @@ public class JobController:ControllerBase
     }
 
     [HttpPut("{Id}")]
-    public async Task<IActionResult> Update([FromRoute] int Id, JobRequest jobRequest,
+    public async Task<IActionResult> Update([FromRoute] int Id, JobUpdateRequest jobRequest,
         CancellationToken cancellationToken)
     {
         var result=await _jobService.UpdateAsync(User.GetUserById()!,Id, jobRequest, cancellationToken);

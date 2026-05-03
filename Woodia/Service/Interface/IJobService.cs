@@ -11,7 +11,7 @@ public interface IJobService
 
     Task<Result<JobResponse>> GetForClientAsync(string clientID,int Id, CancellationToken cancellationToken);
 
-    Task<Result> UpdateAsync(string clientID,int Id, JobRequest jobRequest,
+    Task<Result> UpdateAsync(string clientID,int Id, JobUpdateRequest jobRequest,
         CancellationToken cancellationToken);
 
     Task<Result> InProgressStateAsync(string clientID, int Id, CancellationToken cancellationToken);
