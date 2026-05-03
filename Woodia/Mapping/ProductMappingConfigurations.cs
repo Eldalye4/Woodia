@@ -73,12 +73,17 @@ public class ProductMappingConfigurations : IRegister
         
        config.NewConfig<Product,ProductGridItemResponse>()
            .Map(dest=>dest.ProductStatus,src=>src.ProductStatus)
-           .Map(dest=>dest.Category,src=>src.Category.NameAr)
+           .Map(dest=>dest.Category,src=>CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar")?
+               src.Category.NameAr:
+               src.Category.NameEn)
            .Map(dest=>dest.ImageThumbnail,src=>src.ProductImages
                                                .Where(x=>x.ImagePlace==ImagePlace.Thumbnail)
                                                .Select(x=>x.Url)
                                                .FirstOrDefault())
-           .Map(dest=>dest.ProductLine,src=>src.ProductLine.ToLocalizedString(true));
+           .Map(dest=>dest.ProductLine,src=>
+               CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar")?
+                   src.ProductLine.ToLocalizedString(true):
+                   src.ProductLine.ToLocalizedString(false));
 
        config.NewConfig<ProductStatusRequest, Product>()
            .Map(dest => dest.ProductStatus, src => src.Status);
