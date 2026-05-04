@@ -48,7 +48,7 @@ public class MappingConfigurations : IRegister
                     ? src.SlugAr
                     : src.SlugEn);
         
-        config.NewConfig<Category,CategoryParentResponse>()
+        config.NewConfig<Category,CategoryListingResponse>()
             .Map(dest => dest.Name,
                 src => CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar")
                     ? src.NameAr
@@ -75,7 +75,7 @@ public class MappingConfigurations : IRegister
             .Map(dest => dest.ImageThumbnail, src => src.ImageUrl)
             .Map(dest => dest.ParentCategory,
                 src=>src.Parent);
-        config.NewConfig<Category, ParentCategoryResponse>()
+        config.NewConfig<Category, CategoryListingForAdminResponse>()
             .Map(src => src.Id, dest => dest.Id)
             .Map(dest => dest.NameAr, src => src.NameAr)
             .Map(dest => dest.NameEn, src => src.NameEn);

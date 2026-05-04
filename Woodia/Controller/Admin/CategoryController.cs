@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Woodia.Abstractions.Consts;
+using Woodia.Authentication.Filters;
 using Woodia.Contract.Category;
 using Woodia.Contract.Product;
 using Woodia.Contract.Upload;
@@ -7,9 +9,9 @@ using Woodia.Service.Interface;
 
 namespace Woodia.Controller.Admin;
 [Route("api/admin/[controller]")]
-[Authorize(Roles = "Admin")]
 [ApiExplorerSettings(GroupName = "admin")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public class CategoryController:ControllerBase
 {
     private readonly ICategory _category;
@@ -34,11 +36,17 @@ public class CategoryController:ControllerBase
         var result=await _category.GetForAdminAsync(id, cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
-    [ProducesResponseType(typeof(List<ParentCategoryResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<CategoryListingForAdminResponse>), StatusCodes.Status200OK)]
     [HttpGet("parents")]
     public async Task<IActionResult> GetParents(CancellationToken cancellationToken)
     {
         var result=await _category.GetParentsForAdminAsync(cancellationToken);
+        return result.IsSuccess? Ok(result.Value) : result.ToProblem();
+    }
+    [HttpGet("childrens")]
+    public async Task<IActionResult> GetChildrens(CancellationToken cancellationToken)
+    {
+        var result=await _category.GetChild(cancellationToken);
         return result.IsSuccess? Ok(result.Value) : result.ToProblem();
     }
     [ProducesResponseType(typeof(AdminCategoryResponse), StatusCodes.Status200OK)]

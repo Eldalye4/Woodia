@@ -1,8 +1,10 @@
 
+using System.Globalization;
 using System.Text.Json.Nodes;
 using CloudinaryDotNet;
 using Mapster;
 using Woodia.Contract.Carpenter;
+using Woodia.Contract.Category;
 using Woodia.Contract.Product;
 using Woodia.Entity;
 using Woodia.Enums;
@@ -20,5 +22,9 @@ public class CategoryMappingConfigurations : IRegister
                 ? $"{src.Parent.NameEn} >> {src.NameEn}"
                 : src.NameEn)
             .Map(x=>x.CategoryId, src => src.Id);
+        config.NewConfig<Category, CategoryChildForAdminResponse>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.Name, src =>
+                CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.StartsWith("ar") ? src.NameAr : src.NameEn);
     }
 }

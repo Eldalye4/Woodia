@@ -42,12 +42,22 @@ public class CategoryService : ICategory
         return Result.Success(response);
     }
 
-    public async Task<List<CategoryParentResponse>> GetParent(CancellationToken cancellationToken)
+    public async Task<List<CategoryListingResponse>> GetParent(CancellationToken cancellationToken)
     => await _context.categories
         .AsNoTracking()
         .Where(x => x.ParentId == null )
-        .ProjectToType<CategoryParentResponse>()
+        .ProjectToType<CategoryListingResponse>()
         .ToListAsync(cancellationToken);
+
+    public async Task<Result<List<CategoryChildForAdminResponse>>> GetChild(CancellationToken cancellationToken)
+    {
+        var response = await _context.categories
+            .AsNoTracking()
+            .Where(x => x.ParentId != null)
+            .ProjectToType<CategoryChildForAdminResponse>()
+            .ToListAsync(cancellationToken);
+        return Result.Success(response);
+    }
 
     public async Task<Result<PaginatedList<AdminCategoryListingResponse>>> GetAllForAdminAsync(RequestFilters requestFilters,CancellationToken cancellationToken)
     {
@@ -73,12 +83,12 @@ public class CategoryService : ICategory
         return Result.Success(category);
     }
 
-    public async Task<Result<List<ParentCategoryResponse>>> GetParentsForAdminAsync(CancellationToken cancellationToken)
+    public async Task<Result<List<CategoryListingForAdminResponse>>> GetParentsForAdminAsync(CancellationToken cancellationToken)
     {
         var category = await _context.categories.AsNoTracking()
             .Where(x => x.ParentId == null )
             
-            .ProjectToType<ParentCategoryResponse>()
+            .ProjectToType<CategoryListingForAdminResponse>()
             .ToListAsync(cancellationToken);
         return Result.Success(category);
     }

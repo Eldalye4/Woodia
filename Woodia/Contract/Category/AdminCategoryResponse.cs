@@ -7,5 +7,5 @@ public record AdminCategoryResponse(
     string NameAr,
     string NameEn,
     string ImageThumbnail,
-    ParentCategoryResponse? ParentCategory
+    CategoryListingForAdminResponse? ParentCategory
     );

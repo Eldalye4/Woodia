@@ -31,7 +31,7 @@ public class CategoryController : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
     }
     [HttpGet("Parent")]
-    [ProducesResponseType(typeof(CategoryParentResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CategoryListingResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetParent(CancellationToken cancellationToken)
     {
         return Ok(await _category.GetParent(cancellationToken));

@@ -1,6 +1,6 @@
 namespace Woodia.Contract.Category;
 
-public record ParentCategoryResponse(
+public record CategoryListingForAdminResponse(
     int? Id,
     string NameAr,
     string NameEn
