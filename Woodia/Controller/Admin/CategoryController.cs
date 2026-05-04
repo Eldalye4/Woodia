@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Woodia.Abstractions.Consts;
-using Woodia.Authentication.Filters;
+
 using Woodia.Contract.Category;
 using Woodia.Contract.Product;
 using Woodia.Contract.Upload;
