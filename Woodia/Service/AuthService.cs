@@ -116,13 +116,9 @@ ILogger<AuthService> logger, IOptions<FacebookSettings> optionsFacebook, IHttpCl
             );
             await _userManager.UpdateAsync(user);
 
-            var sw = Stopwatch.StartNew();
 
-            await _userManager.UpdateAsync(user);
-            Console.WriteLine($"UpdateAsync: {sw.ElapsedMilliseconds}ms");
 
             await SendConfirmationEmail(user, uid);
-            Console.WriteLine($"SendEmail: {sw.ElapsedMilliseconds}ms");
             return Result.Success();
 
         }

@@ -25,11 +25,13 @@ public class EmailGoogleService(IOptions<EmailGoogleSetting> SendGridSetting) : 
             {
                 await client.ConnectAsync(_sendGridSettings.Host, _sendGridSettings.Port, SecureSocketOptions.StartTls);
                 
-                await client.AuthenticateAsync(_sendGridSettings.SenderEmail, _sendGridSettings.Password);
+                await client.AuthenticateAsync(
+                    "ab4199001@smtp-brevo.com",
+                    _sendGridSettings.Password);
                 
                 await client.SendAsync(message);
                 
-                await client.DisconnectAsync(_sendGridSettings.EnableSsl);
+                await client.DisconnectAsync(true);
             }
 
             

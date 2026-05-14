@@ -18,7 +18,7 @@ public class EmailService(IOptions<SendGridSetting> SendGridSetting ,ILogger<Ema
         {
             var client = new SendGridClient(_sendGridSettings.ApiKey);
             _logger.LogInformation("ApiKey : {ApiKey} SenderEmail : {SenderEmail}",_sendGridSettings.ApiKey, _sendGridSettings.SenderEmail);
-            var from = new EmailAddress(_sendGridSettings.SenderEmail, _sendGridSettings.SenderName);
+            var from = new EmailAddress(_sendGridSettings.SenderName, _sendGridSettings.SenderEmail);
             var to = new EmailAddress(email);
 
             _logger.LogInformation("Toooooooooooooooo {to}", to);
