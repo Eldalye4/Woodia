@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using Woodia.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDependecy(builder.Configuration);
@@ -53,6 +54,7 @@ app.UseRequestLocalization(localizationOptions);
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<ChatHub>("/chat");
 app.MapControllers();
 
 

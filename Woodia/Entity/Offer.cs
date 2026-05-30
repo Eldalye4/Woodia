@@ -13,5 +13,5 @@ public class Offer:AuditableEntity
     public string CarpenterId{get;set;}
     public Job Job{get;set;}
     public ApplicationUser User{get;set;}
-    
+    public List<ChatRoom> ChatRooms{get;set;}
 }

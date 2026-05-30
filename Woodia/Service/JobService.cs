@@ -150,7 +150,7 @@ public class JobService:IJobService
 
     public async Task<Result<PaginatedList<CarpenterJobListingResponse>>> GetAllForCarpenterAsync(RequestFilters requestFilters,CancellationToken cancellationToken)
     {
-        var jobs = _context.Jobs.Where(x => x.JobStatus == JobStatus.Open).Join(
+        var query = _context.Jobs.Where(x => x.JobStatus == JobStatus.Open).Join(
             _context.categories,
             x => x.CategoryId,
             y => y.Id,
@@ -159,7 +159,16 @@ public class JobService:IJobService
                 Job = Jobs,
                 CategoryName = Categorys.NameAr
             }
-        ).OrderByDescending(x => x.Job.CreatedAt)
+        );
+        if (!string.IsNullOrWhiteSpace((requestFilters.SearchValue)))
+        {
+           
+            query = query.Where(x =>
+                x.Job.Title.ToLower().Contains(requestFilters.SearchValue) ||
+                x.Job.Description.ToLower().Contains(requestFilters.SearchValue)
+            );
+        }
+        var jobs=query.OrderByDescending(x=>x.Job.CreatedAt)
         .Select(x=>new CarpenterJobListingResponse(
             x.Job.Id,
             x.Job.Title,
@@ -174,7 +183,7 @@ public class JobService:IJobService
                 .CreateAsync(jobs, requestFilters.PageNumber, requestFilters.PageSize, cancellationToken);
         return Result.Success(response);
     }
-
+    
     public async Task<Result<CarpenterJobResponse>> GetForCarpenterAsync(int Id,CancellationToken cancellationToken)
     {
         

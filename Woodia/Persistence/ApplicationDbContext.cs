@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Woodia.Entity;
+using Woodia.Enums;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :  IdentityDbContext<ApplicationUser,ApplicationRole,string>(options)
 {
@@ -17,6 +18,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<ProductImage> ProductImages{get;set;}
     public DbSet<Job> Jobs{get;set;}
     public DbSet<Offer> Offers{get;set;}
+    public DbSet<ChatRoom> ChatRooms{get;set;}
+    public DbSet<Message> Messages{get;set;}
+    public DbSet<MessageAttachment> MessageAttachments{get;set;}
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

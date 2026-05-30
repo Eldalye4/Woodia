@@ -7,6 +7,7 @@ using FluentValidation;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using Woodia.Abstractions.FileConfiguration;
+using Woodia.Authentication.Filters;
 using Woodia.Entity;
 using Woodia.Service;
 using Woodia.Service.Interface;
@@ -22,6 +24,7 @@ public static class DebendencyInjection
 {
     public static IServiceCollection AddDependecy(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSignalR();
         services.AddOpenApi();
         services.AddFSwaggerDocs();
         services.AddControllers();
@@ -40,14 +43,18 @@ public static class DebendencyInjection
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<IOfferService, OfferService>();
+        services.AddScoped<IChatService, ChatService>();
+        services.AddScoped<IRoleService,RoleService>();
         services.AddValidatorsFromAssemblyContaining<Program>();
         services.AddHttpClient<ITranlationService, TranslationService>();
-
+        services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
         services.AddFluentValidationAutoValidation();
 
         services.AddCors(Options => Options.AddDefaultPolicy(builder =>
             builder.AllowAnyMethod()
             .AllowAnyHeader()
+            .AllowCredentials()
             .WithOrigins(configuration.GetSection("AllowedOrigins").Get<string[]>()!)));
 
         services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
@@ -131,11 +138,12 @@ public static class DebendencyInjection
                     
                     if (group == "Upload" && (groupName == "admin" || groupName == "carpenter"))
                         return true;
+                    if (group == "Chat" && (groupName == "client" || groupName == "carpenter"))
+                        return true;
                     return group == groupName;
                 });
                 options.MapType<JsonNode>(() => new Microsoft.OpenApi.Models.OpenApiSchema { Type = "object" });
 
-                // Global Security Requirement
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {

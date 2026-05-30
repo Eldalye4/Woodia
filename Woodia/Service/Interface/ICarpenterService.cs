@@ -23,6 +23,8 @@ public interface ICarpenterService
     Task<Result<PaginatedList<PortfolioItemResponse>>> GetAllAsync(string userId, RequestFilters requestFilters,
         CancellationToken cancellationToken);
 
-    
+    Task<Result<CompleteProfileResponse>> GetCompleteProfile(string userId);
+
+
 
 }

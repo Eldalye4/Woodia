@@ -152,4 +152,18 @@ public class CarpenterService:ICarpenterService
         return Result.Success(response);
 
     }
+
+    public async Task<Result<CompleteProfileResponse>> GetCompleteProfile(string userId)
+    {
+        
+        if (await _context.Users.Include(x=>x.CarpenterProfile)
+                                    .ThenInclude(x=>x.PortfolioItems)
+                                        .ThenInclude(x=>x.PortfolioItemImages)
+                                    .FirstOrDefaultAsync(x=>x.Id==userId) is not { } user)
+        {
+            return Result.failure<CompleteProfileResponse>(UserErrors.InvalidJwtToken);
+        }
+
+        return Result.Success(user.Adapt<CompleteProfileResponse>());
+    }
 }

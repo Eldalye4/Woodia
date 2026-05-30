@@ -82,6 +82,10 @@ public class MappingConfigurations : IRegister
 
         config.NewConfig<CategoryRequest, Category>()
             .Map(src => src.ImageUrl, dest => dest.ImageThumbnail);
+        config.NewConfig<ApplicationUser, CompleteProfileResponse>()
+            .Map(dest => dest.PortfolioItem, src => src.CarpenterProfile.PortfolioItems)
+            .Map(dest=>dest.ProfessionalProfile,src=>src.CarpenterProfile);
         
+
     }
 }

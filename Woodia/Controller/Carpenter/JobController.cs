@@ -15,7 +15,7 @@ public class JobController:ControllerBase
         _jobService = jobService;
     }
     [HttpGet("available")]
-    public async Task<IActionResult> GetAll([FromRoute]RequestFilters requestFilters,CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery]RequestFilters requestFilters,CancellationToken cancellationToken)
     {
         var result = await _jobService.GetAllForCarpenterAsync(requestFilters, cancellationToken);
         return result.IsSuccess? Ok(result.Value) : BadRequest(result);

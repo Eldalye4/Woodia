@@ -1,6 +1,6 @@
 public static class DefaultRoles
 {
-    public const string Admin = nameof(Admin);
+    public const string SuperAdmin = nameof(SuperAdmin);
     public const string AdminRoleId = "019a4315-0500-7a3e-82f2-64426f10845d";
     public const string AdminRoleConcurrencyStamp = "019a4315-0500-7a3e-82f2-6443c8379619";
 

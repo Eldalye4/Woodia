@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SignalR Chat Tester — Woodia</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0f1117;--surface:#1a1d27;--card:#22263a;--border:#2e3350;
+    --accent:#4f8ef7;--accent2:#7c5cfc;--sent:#1e3a5f;--received:#222640;
+    --text:#e8eaf6;--muted:#7b82a8;--green:#2dd4a0;--red:#f76a6a;--amber:#f7c94f;
+    --radius:14px;--radius-sm:8px;
+  }
+  body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+  .header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-shrink:0}
+  .header-title{font-size:16px;font-weight:600;flex:1}
+  .header-title span{font-size:12px;color:var(--muted);display:block;font-weight:400;margin-top:2px}
+  .status-dot{width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0;transition:background .3s}
+  .status-dot.connected{background:var(--green)}
+  .status-dot.connecting{background:var(--amber);animation:pulse 1s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+  .main{display:flex;flex:1;overflow:hidden}
+
+  .sidebar{width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+  .section-label{font-size:11px;color:var(--muted);padding:14px 16px 6px;text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+  .field-group{padding:0 12px 8px}
+  .field-label{font-size:12px;color:var(--muted);margin-bottom:4px}
+  .field-input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:var(--radius-sm);padding:8px 10px;font-size:13px;font-family:'Cairo',sans-serif;outline:none;transition:border-color .2s}
+  .field-input:focus{border-color:var(--accent)}
+  .btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;font-family:'Cairo',sans-serif;cursor:pointer;font-weight:500;transition:opacity .2s,transform .1s;margin-top:4px}
+  .btn:hover{opacity:.88}
+  .btn:active{transform:scale(.98)}
+  .btn.danger{background:var(--red)}
+  .btn.secondary{background:var(--card);border:1px solid var(--border);color:var(--text)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+
+  .conn-info{background:var(--card);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px}
+  .conn-info .row{display:flex;justify-content:space-between;margin-bottom:4px;gap:8px}
+  .conn-info .row:last-child{margin-bottom:0}
+  .conn-info .key{color:var(--muted)}
+  .conn-info .val{color:var(--text);font-weight:500;text-align:right;word-break:break-all;max-width:120px}
+
+  .chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .chat-toolbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .room-badge{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:13px;color:var(--accent)}
+  .toolbar-actions{margin-left:auto;display:flex;gap:8px}
+  .icon-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-sm);padding:6px 10px;font-size:12px;cursor:pointer;font-family:'Cairo',sans-serif;transition:color .2s,border-color .2s}
+  .icon-btn:hover{color:var(--text);border-color:var(--accent)}
+
+  .messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .messages::-webkit-scrollbar{width:4px}
+  .messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+  .msg{max-width:72%;display:flex;flex-direction:column;gap:3px}
+  .msg.sent{align-self:flex-end;align-items:flex-end}
+  .msg.received{align-self:flex-start;align-items:flex-start}
+  .msg.system{align-self:center;align-items:center;max-width:90%}
+  .msg-bubble{padding:9px 13px;border-radius:var(--radius);font-size:14px;line-height:1.55;word-break:break-word}
+  .msg.sent .msg-bubble{background:var(--sent);border-bottom-right-radius:4px}
+  .msg.received .msg-bubble{background:var(--received);border-bottom-left-radius:4px}
+  .msg.system .msg-bubble{background:var(--card);border:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center;border-radius:20px;padding:5px 14px}
+  .msg-meta{font-size:11px;color:var(--muted);display:flex;gap:6px;align-items:center}
+  .msg-type-badge{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1px 7px;font-size:10px;color:var(--muted)}
+  .attachment-chip{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 10px;font-size:12px;display:flex;align-items:center;gap:6px;margin-top:4px;color:var(--muted)}
+
+  .log-section{background:var(--surface);border-top:1px solid var(--border);height:130px;overflow-y:auto;flex-shrink:0}
+  .log-section::-webkit-scrollbar{width:4px}
+  .log-section::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+  .log-entry{font-size:11px;padding:3px 14px;font-family:monospace;line-height:1.5}
+  .log-entry.info{color:#7b8ac4}
+  .log-entry.success{color:var(--green)}
+  .log-entry.error{color:var(--red)}
+  .log-entry.recv{color:#b99ef7}
+  .log-entry.send{color:#7fc1fa}
+  .log-header{font-size:10px;color:var(--muted);padding:6px 14px 2px;text-transform:uppercase;letter-spacing:.08em;position:sticky;top:0;background:var(--surface)}
+
+  .composer{background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;flex-shrink:0}
+  .attachments-preview{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .att-chip{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;font-size:12px;display:flex;align-items:center;gap:6px;color:var(--muted)}
+  .att-chip .remove{cursor:pointer;color:var(--red);font-size:14px;line-height:1}
+  .composer-row{display:flex;gap:8px;align-items:flex-end}
+  .msg-input{flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:10px 14px;font-size:14px;font-family:'Cairo',sans-serif;resize:none;outline:none;max-height:100px;transition:border-color .2s;line-height:1.5}
+  .msg-input:focus{border-color:var(--accent)}
+  .send-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;border-radius:var(--radius);width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .2s,transform .1s;font-size:16px}
+  .send-btn:hover{opacity:.88}
+  .send-btn:active{transform:scale(.95)}
+  .att-btn{background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius);width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;transition:color .2s}
+  .att-btn:hover{color:var(--text)}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;width:320px;max-width:90%}
+  .modal h3{font-size:15px;margin-bottom:14px}
+  .modal-actions{display:flex;gap:8px;margin-top:14px}
+  .modal-actions .btn{margin-top:0}
+
+  .empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);gap:8px;text-align:center;padding:24px}
+  .empty-state .big{font-size:40px}
+  .empty-state p{font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div id="statusDot" class="status-dot"></div>
+  <div class="header-title">
+    SignalR Chat Tester
+    <span id="statusText">غير متصل</span>
+  </div>
+  <div style="font-size:12px;color:var(--muted)">Woodia ChatHub</div>
+</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="section-label">إعداد الاتصال</div>
+    <div class="field-group">
+      <div class="field-label">Hub URL</div>
+      <input class="field-input" id="hubUrl" value="https://localhost:7001/chatHub" placeholder="https://...">
+    </div>
+    <div class="field-group">
+      <div class="field-label">User ID</div>
+      <input class="field-input" id="userId" value="user-123" placeholder="userId">
+    </div>
+    <div class="field-group">
+      <div class="field-label">Bearer Token (اختياري)</div>
+      <input class="field-input" id="bearerToken" placeholder="eyJhbGci...">
+    </div>
+    <div class="field-group" style="display:flex;gap:6px;padding-top:4px">
+      <button class="btn" id="connectBtn" onclick="connectHub()">اتصل</button>
+      <button class="btn danger" id="disconnectBtn" onclick="disconnectHub()" disabled>قطع</button>
+    </div>
+
+    <div class="section-label">الغرفة</div>
+    <div class="field-group">
+      <div class="field-label">Room ID</div>
+      <input class="field-input" id="roomId" value="1" type="number">
+    </div>
+    <div class="field-group">
+      <button class="btn secondary" id="joinBtn" onclick="joinRoom()" disabled>انضم للغرفة (JoinGroup)</button>
+    </div>
+
+    <div class="section-label">خيارات</div>
+    <div class="field-group">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+        <input type="checkbox" id="autoScroll" checked style="accent-color:var(--accent)">
+        تمرير تلقائي
+      </label>
+    </div>
+
+    <div style="padding:12px;margin-top:auto">
+      <div class="conn-info">
+        <div class="row"><span class="key">الحالة</span><span class="val" id="connStatus" style="color:var(--red)">Disconnected</span></div>
+        <div class="row"><span class="key">الغرفة</span><span class="val" id="connRoom">-</span></div>
+        <div class="row"><span class="key">رسايل</span><span class="val" id="msgCount">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-area">
+    <div class="chat-toolbar">
+      <span style="font-size:13px;color:var(--muted)">الغرفة:</span>
+      <span class="room-badge" id="roomBadge">-</span>
+      <div class="toolbar-actions">
+        <button class="icon-btn" onclick="clearMessages()">مسح الرسايل</button>
+        <button class="icon-btn" onclick="showRaw()">JSON خام</button>
+      </div>
+    </div>
+
+    <div id="messagesContainer" class="messages">
+      <div class="empty-state">
+        <div class="big">💬</div>
+        <p>اتصل بالـ Hub واضم لغرفة عشان تبدأ</p>
+      </div>
+    </div>
+
+    <div class="log-section">
+      <div class="log-header">سجل الأحداث</div>
+      <div id="logContainer"></div>
+    </div>
+
+    <div class="composer">
+      <div id="attachmentsPreview" class="attachments-preview"></div>
+      <div class="composer-row">
+        <button class="att-btn" onclick="showAttachmentModal()" title="إضافة مرفق">📎</button>
+        <textarea class="msg-input" id="msgInput" rows="1" placeholder="اكتب رسالة..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attachment Modal -->
+<div class="modal-overlay" id="attachmentModal">
+  <div class="modal">
+    <h3>إضافة مرفق</h3>
+    <div class="field-group" style="padding:0;margin-bottom:10px">
+      <div class="field-label">File URL</div>
+      <input class="field-input" id="attUrl" placeholder="https://example.com/file.jpg">
+    </div>
+    <div class="field-group" style="padding:0">
+      <div class="field-label">نوع الملف (MessageType)</div>
+      <select class="field-input" id="attType">
+        <option value="1">Image</option>
+        <option value="2">Video</option>
+        <option value="3">Audio</option>
+        <option value="4">File</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="addAttachment()">إضافة</button>
+      <button class="btn secondary" onclick="closeAttachmentModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- Raw JSON Modal -->
+<div class="modal-overlay" id="rawModal">
+  <div class="modal" style="width:500px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column">
+    <h3>آخر رسالة JSON</h3>
+    <pre id="rawJson" style="background:var(--card);border-radius:var(--radius-sm);padding:12px;font-size:12px;overflow:auto;flex:1;color:var(--text);border:1px solid var(--border);margin:8px 0;font-family:monospace;line-height:1.5;white-space:pre-wrap;word-break:break-all;max-height:300px"></pre>
+    <button class="btn secondary" onclick="document.getElementById('rawModal').classList.remove('show')">إغلاق</button>
+  </div>
+</div>
+
+<script>
+let connection = null;
+let msgCount = 0;
+let attachments = [];
+let lastRaw = null;
+
+function log(msg, type='info'){
+  const container = document.getElementById('logContainer');
+  const t = new Date().toLocaleTimeString('ar-EG');
+  const div = document.createElement('div');
+  div.className = `log-entry ${type}`;
+  div.textContent = `[${t}] ${msg}`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function setStatus(state){
+  const dot = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  const connStatus = document.getElementById('connStatus');
+  const connectBtn = document.getElementById('connectBtn');
+  const disconnectBtn = document.getElementById('disconnectBtn');
+  const joinBtn = document.getElementById('joinBtn');
+  dot.className = 'status-dot ' + state;
+  if(state === 'connected'){
+    text.textContent = 'متصل';
+    connStatus.textContent = 'Connected';
+    connStatus.style.color = 'var(--green)';
+    connectBtn.disabled = true;
+    disconnectBtn.disabled = false;
+    joinBtn.disabled = false;
+  } else if(state === 'connecting'){
+    text.textContent = 'جاري الاتصال...';
+    connStatus.textContent = 'Connecting';
+    connStatus.style.color = 'var(--amber)';
+    connectBtn.disabled = true;
+  } else {
+    text.textContent = 'غير متصل';
+    connStatus.textContent = 'Disconnected';
+    connStatus.style.color = 'var(--red)';
+    connectBtn.disabled = false;
+    disconnectBtn.disabled = true;
+    joinBtn.disabled = true;
+    document.getElementById('connRoom').textContent = '-';
+    document.getElementById('roomBadge').textContent = '-';
+  }
+}
+
+async function connectHub(){
+  const url = document.getElementById('hubUrl').value.trim();
+  const token = document.getElementById('bearerToken').value.trim();
+  if(!url){ log('ادخل Hub URL', 'error'); return; }
+  setStatus('connecting');
+  log(`جاري الاتصال بـ ${url}`, 'info');
+  try {
+    const builder = new signalR.HubConnectionBuilder()
+      .withUrl(url, {
+        accessTokenFactory: token ? () => token : undefined,
+        transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling
+      })
+      .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Warning);
+    connection = builder.build();
+
+    connection.on('ReceiveMessage', (data) => {
+      lastRaw = data;
+      log(`ReceiveMessage ← ${typeof data === 'object' ? JSON.stringify(data).slice(0,80) : data}`, 'recv');
+      displayMessage(data, false);
+    });
+
+    connection.onreconnecting(() => { setStatus('connecting'); log('إعادة الاتصال...', 'info'); });
+    connection.onreconnected(() => { setStatus('connected'); log('تم إعادة الاتصال', 'success'); });
+    connection.onclose((err) => {
+      setStatus('');
+      if(err) log('انقطع الاتصال: ' + err.message, 'error');
+      else log('انتهى الاتصال', 'info');
+    });
+
+    await connection.start();
+    setStatus('connected');
+    log('تم الاتصال بنجاح ✓', 'success');
+    clearEmptyState();
+  } catch(e){
+    setStatus('');
+    log('فشل الاتصال: ' + e.message, 'error');
+  }
+}
+
+async function disconnectHub(){
+  if(connection){ await connection.stop(); }
+}
+
+async function joinRoom(){
+  if(!connection){ log('اتصل أولاً', 'error'); return; }
+  const roomId = parseInt(document.getElementById('roomId').value);
+  log(`JoinGroup(${roomId}) →`, 'send');
+  try {
+    await connection.invoke('JoinGroup', roomId);
+    document.getElementById('connRoom').textContent = roomId;
+    document.getElementById('roomBadge').textContent = `Room ${roomId}`;
+    log(`انضممت للغرفة ${roomId} ✓`, 'success');
+  } catch(e){
+    log('فشل الانضمام: ' + e.message, 'error');
+  }
+}
+
+async function sendMessage(){
+  if(!connection){ log('اتصل أولاً', 'error'); return; }
+  const content = document.getElementById('msgInput').value.trim();
+  const roomId = parseInt(document.getElementById('roomId').value);
+  if(!content && attachments.length === 0){ return; }
+  const req = {
+    RoomId: roomId,
+    Content: content || null,
+    Attachments: attachments.length > 0 ? [...attachments] : null
+  };
+  log(`SendMessage → ${JSON.stringify(req).slice(0,100)}`, 'send');
+  try {
+    await connection.invoke('SendMessage', req, roomId);
+    displayMessage({
+      content,
+      senderId: document.getElementById('userId').value,
+      sentAt: new Date().toISOString(),
+      attachments: [...attachments]
+    }, true);
+    document.getElementById('msgInput').value = '';
+    document.getElementById('msgInput').style.height = 'auto';
+    attachments = [];
+    renderAttachments();
+  } catch(e){
+    log('فشل الإرسال: ' + e.message, 'error');
+  }
+}
+
+function clearEmptyState(){
+  const c = document.getElementById('messagesContainer');
+  const es = c.querySelector('.empty-state');
+  if(es) es.remove();
+}
+
+function displayMessage(data, isSent){
+  clearEmptyState();
+  const c = document.getElementById('messagesContainer');
+  const div = document.createElement('div');
+  let content = '', senderId = '', isSystem = false, atts = [];
+  if(typeof data === 'string'){
+    content = data;
+    if(data.includes('joined')){ isSystem = true; }
+  } else if(typeof data === 'object' && data !== null){
+    content = data.content || data.Content || '';
+    senderId = data.senderId || data.SenderId || '';
+    atts = data.attachments || data.Attachments || [];
+    if(!senderId){ isSystem = true; }
+  }
+  div.className = `msg ${isSystem ? 'system' : isSent ? 'sent' : 'received'}`;
+  const typeLabel = getTypeLabel(data);
+  let attHtml = '';
+  if(atts && atts.length > 0){
+    atts.forEach(a => {
+      const url = a.fileUrl || a.FileUrl || '';
+      const ftype = a.fileType || a.FileType || '';
+      attHtml += `<div class="attachment-chip">${fileIcon(ftype)} ${escHtml(url.split('/').pop()||'مرفق')} <span style="color:var(--accent);font-size:10px">${ftype}</span></div>`;
+    });
+  }
+  const time = new Date().toLocaleTimeString('ar-EG', {hour:'2-digit',minute:'2-digit'});
+  div.innerHTML = `
+    <div class="msg-bubble">${escHtml(content)}${attHtml}</div>
+    <div class="msg-meta">
+      <span>${isSystem ? 'نظام' : (isSent ? 'أنت' : (senderId||'الطرف الآخر'))}</span>
+      <span>${time}</span>
+      ${typeLabel ? `<span class="msg-type-badge">${typeLabel}</span>` : ''}
+    </div>`;
+  c.appendChild(div);
+  msgCount++;
+  document.getElementById('msgCount').textContent = msgCount;
+  if(document.getElementById('autoScroll').checked){
+    c.scrollTop = c.scrollHeight;
+  }
+}
+
+function getTypeLabel(data){
+  if(!data || typeof data !== 'object') return null;
+  const t = data.messageType || data.MessageType;
+  const map = {0:'System',1:'Text',2:'Image',3:'Video',4:'Audio',5:'File',6:'Mixed'};
+  return map[t] || null;
+}
+
+function fileIcon(type){
+  const map = {1:'🖼',2:'🎬',3:'🎵',4:'📄'};
+  return map[type] || '📎';
+}
+
+function escHtml(s){
+  if(!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function clearMessages(){
+  const c = document.getElementById('messagesContainer');
+  c.innerHTML = '<div class="empty-state"><div class="big">💬</div><p>تم مسح الرسايل</p></div>';
+  msgCount = 0;
+  document.getElementById('msgCount').textContent = 0;
+}
+
+function showRaw(){
+  document.getElementById('rawJson').textContent = lastRaw
+    ? JSON.stringify(lastRaw, null, 2)
+    : 'مفيش رسايل اتستقبلت لحد دلوقتي';
+  document.getElementById('rawModal').classList.add('show');
+}
+
+function showAttachmentModal(){
+  document.getElementById('attachmentModal').classList.add('show');
+}
+function closeAttachmentModal(){
+  document.getElementById('attachmentModal').classList.remove('show');
+  document.getElementById('attUrl').value = '';
+}
+function addAttachment(){
+  const url = document.getElementById('attUrl').value.trim();
+  const type = parseInt(document.getElementById('attType').value);
+  if(!url){ return; }
+  attachments.push({FileUrl: url, FileType: type});
+  renderAttachments();
+  closeAttachmentModal();
+}
+function renderAttachments(){
+  const p = document.getElementById('attachmentsPreview');
+  p.innerHTML = '';
+  attachments.forEach((a,i) => {
+    const chip = document.createElement('div');
+    chip.className = 'att-chip';
+    chip.innerHTML = `${fileIcon(a.FileType)} ${a.FileUrl.split('/').pop()||'file'} <span class="remove" onclick="removeAtt(${i})">✕</span>`;
+    p.appendChild(chip);
+  });
+}
+function removeAtt(i){ attachments.splice(i,1); renderAttachments(); }
+
+function handleKey(e){
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+}
+function autoResize(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+document.getElementById('rawModal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('show'); });
+document.getElementById('attachmentModal').addEventListener('click', function(e){ if(e.target===this) closeAttachmentModal(); });
+
+log('ChatHub Tester جاهز — اتصل عشان تبدأ', 'info');
+</script>
+</body>
+</html>

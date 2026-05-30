@@ -14,4 +14,6 @@ public sealed class ApplicationUser : IdentityUser
     public CarpenterProfile? CarpenterProfile { get; set; } 
     public List<Job>? Job{ get; set; }
     public List<Offer> Offers { get; set; } = [];
+    public List<ChatRoom> ClientChatRooms{get;set;} = [];
+    public List<ChatRoom> CarpenterChatRooms{get;set;} = [];
 }

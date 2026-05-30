@@ -326,6 +326,64 @@ namespace Woodia.Persistence.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "Permissions",
+                            ClaimValue = "categorys:read",
+                            RoleId = "019a4315-0500-7a3e-82f2-64426f10845d"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClaimType = "Permissions",
+                            ClaimValue = "categorys:add",
+                            RoleId = "019a4315-0500-7a3e-82f2-64426f10845d"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClaimType = "Permissions",
+                            ClaimValue = "categorys:update",
+                            RoleId = "019a4315-0500-7a3e-82f2-64426f10845d"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ClaimType = "Permissions",
+                            ClaimValue = "categorys:delete",
+                            RoleId = "019a4315-0500-7a3e-82f2-64426f10845d"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ClaimType = "Permissions",
+                            ClaimValue = "products:read",
+                            RoleId = "019a4315-0500-7a3e-82f2-64426f10845d"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ClaimType = "Permissions",
+                            ClaimValue = "products:add",
+                            RoleId = "019a4315-0500-7a3e-82f2-64426f10845d"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ClaimType = "Permissions",
+                            ClaimValue = "products:update",
+                            RoleId = "019a4315-0500-7a3e-82f2-64426f10845d"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ClaimType = "Permissions",
+                            ClaimValue = "products:delete",
+                            RoleId = "019a4315-0500-7a3e-82f2-64426f10845d"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -451,8 +509,8 @@ namespace Woodia.Persistence.Migrations
                             Id = "019a4315-0500-7a3e-82f2-64426f10845d",
                             ConcurrencyStamp = "019a4315-0500-7a3e-82f2-6443c8379619",
                             IsDeleted = false,
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
@@ -603,6 +661,42 @@ namespace Woodia.Persistence.Migrations
                     b.ToTable("CarpenterProfiles");
                 });
 
+            modelBuilder.Entity("Woodia.Entity.ChatRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CarpenterId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastMessageDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OfferId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarpenterId");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("OfferId");
+
+                    b.ToTable("ChatRooms");
+                });
+
             modelBuilder.Entity("Woodia.Entity.Job", b =>
                 {
                     b.Property<int>("Id")
@@ -652,6 +746,69 @@ namespace Woodia.Persistence.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("Jobs");
+                });
+
+            modelBuilder.Entity("Woodia.Entity.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChatRoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MessageType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatRoomId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("Woodia.Entity.MessageAttachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("MessageAttachments");
                 });
 
             modelBuilder.Entity("Woodia.Entity.Offer", b =>
@@ -981,6 +1138,33 @@ namespace Woodia.Persistence.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("Woodia.Entity.ChatRoom", b =>
+                {
+                    b.HasOne("Woodia.Entity.ApplicationUser", "Carpenter")
+                        .WithMany("CarpenterChatRooms")
+                        .HasForeignKey("CarpenterId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Woodia.Entity.ApplicationUser", "Client")
+                        .WithMany("ClientChatRooms")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Woodia.Entity.Offer", "Offer")
+                        .WithMany("ChatRooms")
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Carpenter");
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Offer");
+                });
+
             modelBuilder.Entity("Woodia.Entity.Job", b =>
                 {
                     b.HasOne("Woodia.Entity.ApplicationUser", "ApplicationUser")
@@ -990,6 +1174,35 @@ namespace Woodia.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("Woodia.Entity.Message", b =>
+                {
+                    b.HasOne("Woodia.Entity.ChatRoom", "ChatRoom")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Woodia.Entity.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ChatRoom");
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("Woodia.Entity.MessageAttachment", b =>
+                {
+                    b.HasOne("Woodia.Entity.Message", "Message")
+                        .WithMany("Attachments")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Message");
                 });
 
             modelBuilder.Entity("Woodia.Entity.Offer", b =>
@@ -1069,7 +1282,11 @@ namespace Woodia.Persistence.Migrations
 
             modelBuilder.Entity("Woodia.Entity.ApplicationUser", b =>
                 {
+                    b.Navigation("CarpenterChatRooms");
+
                     b.Navigation("CarpenterProfile");
+
+                    b.Navigation("ClientChatRooms");
 
                     b.Navigation("Job");
 
@@ -1084,9 +1301,24 @@ namespace Woodia.Persistence.Migrations
                     b.Navigation("PortfolioItems");
                 });
 
+            modelBuilder.Entity("Woodia.Entity.ChatRoom", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("Woodia.Entity.Job", b =>
                 {
                     b.Navigation("Offers");
+                });
+
+            modelBuilder.Entity("Woodia.Entity.Message", b =>
+                {
+                    b.Navigation("Attachments");
+                });
+
+            modelBuilder.Entity("Woodia.Entity.Offer", b =>
+                {
+                    b.Navigation("ChatRooms");
                 });
 
             modelBuilder.Entity("Woodia.Entity.PortfolioItem", b =>

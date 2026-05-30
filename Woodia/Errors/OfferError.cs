@@ -21,4 +21,8 @@ public static class OfferError
         new("Offer.InvalidStatus", 
             "Cannot modify the offer status because it is not in the Pending or Interviewing state.",
             StatusCodes.Status400BadRequest);
+    public static readonly Error NotJobOwner = new (
+        "Offer.AccessDenied", 
+        "You are not authorized to accept this offer because you are not the job owner.",
+        StatusCodes.Status403Forbidden);
 }

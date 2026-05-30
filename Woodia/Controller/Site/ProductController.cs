@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Woodia.Abstractions.Consts;
 using Woodia.Service.Interface;
 
 namespace Woodia.Controller.Site;
@@ -35,5 +36,12 @@ public class ProductController: ControllerBase
     {
         var result = await _productService.GetMostLovedAsync(cancellationToken);
         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
+    }
+
+    [HttpGet("test")]
+    public IActionResult test()
+    {
+        var per = Permissions.GetAllPermissions();
+        return Ok(per);
     }
 }

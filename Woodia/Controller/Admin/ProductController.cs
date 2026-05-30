@@ -9,7 +9,7 @@ using Woodia.Service.Interface;
 namespace Woodia.Controller.Admin;
 [Route("api/admin/[controller]")]
 [ApiExplorerSettings(GroupName = "admin")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "SuperAdmin")]
 [ApiController]
 public class ProductController:ControllerBase
 {
@@ -61,5 +61,6 @@ public class ProductController:ControllerBase
         var result = await _productService.UpdateForAdminAsync(id, productUpdateRequest, cancellationToken);
         return result.IsSuccess ? NoContent() : result.ToProblem();
     }
+    
     
 }

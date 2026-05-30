@@ -35,6 +35,8 @@ public class OfferMappingConfigurations : IRegister
         config.NewConfig<Offer, JobOfferDetailsResponse>()
             .Map(dest => dest.Status, src => src.Status)
             .Map(dest => dest.CarpenterId, src => src.CarpenterId)
-            .Map(dest => dest.CarpenterName, src => $"{src.User.FirstName} {src.User.LastName}");
+            .Map(dest => dest.CarpenterName, src => $"{src.User.FirstName} {src.User.LastName}")
+            .Map(dest=>dest.CarpenterImage,src=>src.User.PhotoUrl);
+            
     }
 }

@@ -11,8 +11,8 @@ public class RoleConfiguration : IEntityTypeConfiguration<ApplicationRole>
         builder.HasData([
           new ApplicationRole{
             Id=DefaultRoles.AdminRoleId,
-            Name=DefaultRoles.Admin,
-            NormalizedName=DefaultRoles.Admin.ToUpper(),
+            Name=DefaultRoles.SuperAdmin,
+            NormalizedName=DefaultRoles.SuperAdmin.ToUpper(),
             ConcurrencyStamp=DefaultRoles.AdminRoleConcurrencyStamp
 
         },
