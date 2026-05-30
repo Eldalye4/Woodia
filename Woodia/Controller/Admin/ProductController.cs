@@ -9,7 +9,7 @@ using Woodia.Service.Interface;
 namespace Woodia.Controller.Admin;
 [Route("api/admin/[controller]")]
 [ApiExplorerSettings(GroupName = "admin")]
-[Authorize(Roles = "SuperAdmin")]
+[Authorize(Roles = "Admin")]
 [ApiController]
 public class ProductController:ControllerBase
 {
