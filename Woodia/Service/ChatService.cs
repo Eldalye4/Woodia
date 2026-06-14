@@ -19,6 +19,8 @@ public class ChatService:IChatService
         var chatRoom = await _context.ChatRooms.FirstOrDefaultAsync(x => x.OfferId == offerId, cancellationToken);
         if (chatRoom != null)
         {
+            if (chatRoom.ClientId != userId && chatRoom.CarpenterId != userId)
+                return Result.failure<ChatRoomResponse>(ChatError.AccessDenied);
             return Result.Success(chatRoom.Adapt<ChatRoomResponse>());
         }
             

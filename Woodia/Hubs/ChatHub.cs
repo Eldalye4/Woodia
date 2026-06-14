@@ -23,7 +23,7 @@ public class ChatHub:Hub
         }
         await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
     }
-    public async Task SendMessage(SendMessageRequest sendMessageRequest, int roomId)
+    public async Task SendMessage(SendMessageRequest sendMessageRequest)
     {
         var userId = Context.UserIdentifier;
         var result=await _chatService.SaveMessage(userId,sendMessageRequest);
@@ -31,7 +31,7 @@ public class ChatHub:Hub
         {
             throw new HubException(result.Error.Description);
         }
-        await Clients.OthersInGroup(roomId.ToString()).SendAsync("ReceiveMessage",result.Value);
+        await Clients.OthersInGroup(sendMessageRequest.RoomId.ToString()).SendAsync("ReceiveMessage",result.Value);
     }
     
 }
