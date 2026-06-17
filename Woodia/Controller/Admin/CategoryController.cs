@@ -10,7 +10,7 @@ namespace Woodia.Controller.Admin;
 [Route("api/admin/[controller]")]
 [ApiExplorerSettings(GroupName = "admin")]
 [ApiController]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "SuperAdmin")]
 public class CategoryController:ControllerBase
 {
     private readonly ICategory _category;
