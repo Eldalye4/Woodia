@@ -18,6 +18,7 @@ using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using Woodia.Abstractions.FileConfiguration;
 using Woodia.Authentication.Filters;
 using Woodia.Entity;
+using Woodia.Factory;
 using Woodia.Service;
 using Woodia.Service.Interface;
 public static class DebendencyInjection
@@ -45,6 +46,7 @@ public static class DebendencyInjection
         services.AddScoped<IOfferService, OfferService>();
         services.AddScoped<IChatService, ChatService>();
         services.AddScoped<IRoleService,RoleService>();
+        services.AddScoped<IUploadParamsFactory,UploadParamsFactory>();
         services.AddValidatorsFromAssemblyContaining<Program>();
         services.AddHttpClient<ITranlationService, TranslationService>();
         services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
