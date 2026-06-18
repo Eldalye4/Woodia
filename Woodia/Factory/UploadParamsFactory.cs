@@ -22,10 +22,20 @@ public class UploadParamsFactory: IUploadParamsFactory
             if (result.Error != null) throw new Exception(result.Error.Message);
             return result.SecureUrl.ToString();
         }
+        else if (file.ContentType.StartsWith("image/"))
+        {
+        
+            var result = await cloudinary.UploadAsync(
+                new ImageUploadParams { File = fileDescription },
+                cancellationToken);
+
+            if (result.Error != null) throw new Exception(result.Error.Message);
+            return result.SecureUrl.ToString();
+        }
         else
         {
             var result = await cloudinary.UploadAsync(
-                new ImageUploadParams { File = fileDescription },
+                new RawUploadParams { File = fileDescription },"raw",
                 cancellationToken);
 
             if (result.Error != null) throw new Exception(result.Error.Message);
