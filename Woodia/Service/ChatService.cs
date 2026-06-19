@@ -59,9 +59,10 @@ public class ChatService:IChatService
     
     public async Task<Result<PaginatedList<ChatRoomListResponse>>> GetAllRoom(string userId,RequestFilters requestFilters,CancellationToken cancellationToken)
     {
-        var Chats =  _context
+        var Chats = _context
             .ChatRooms
-            .Where(x => x.ClientId == userId || x.CarpenterId == userId).OrderByDescending(x => x.LastMessageDate)
+            .Where(x => x.ClientId == userId || x.CarpenterId == userId)
+            .OrderByDescending(x => x.LastMessageDate)
             .Select(x => new ChatRoomListResponse
             (
                 x.Id,
@@ -70,9 +71,10 @@ public class ChatService:IChatService
                     ? $"{x.Client.FirstName} {x.Client.LastName}"
                     : $"{x.Carpenter.FirstName} {x.Carpenter.LastName}"
                 ,
-                x.Offer.Job.Title, 
-                x.Messages.OrderByDescending(y=>y.SentAt).Select(s=>s.Content).FirstOrDefault()??""
-                , x.LastMessageDate,
+                x.Offer.Job.Title,
+                x.Messages.OrderByDescending(y => y.SentAt).Select(s => s.Content).FirstOrDefault() ?? ""
+                , x.LastMessageDate, 
+                x.Messages.OrderByDescending(y => y.SentAt).Select(s => s.MessageType).First(),
                 x.Messages.Count(y => y.SenderId != userId && !y.IsRead)
 
 
