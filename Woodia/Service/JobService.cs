@@ -29,17 +29,19 @@ public class JobService:IJobService
         {
             return Result.failure<JobResponse>(CategoryError.CategoryNotFound);
         }
-        if (await _context.Products.FirstOrDefaultAsync(x => x.Id == jobRequest.ProductId,cancellationToken) is not { } product)
-        {
-            return Result.failure<JobResponse>(ProductError.ProductNotFound);
-        }
-    
         if (category.ParentId == null)
         {
             return Result.failure<JobResponse>(JobError.CannotLinkToParent);
         }
+        var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == jobRequest.ProductId, cancellationToken);
+        if (product is not null)
+        {
+            product.JobsCount += 1;
+        }
+    
+        
 
-        product.JobsCount += 1;
+        
         var job = jobRequest.Adapt<Job>();
         job.ClientId = UserId;
         await _context.Jobs.AddAsync(job, cancellationToken);
