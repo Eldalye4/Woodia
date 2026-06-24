@@ -38,7 +38,7 @@ public class JwtProvider : IjwtProvider
             expires: DateTime.UtcNow.AddMinutes(_options.ExpiryMintes),
             signingCredentials: singingCredentials
         );
-        return (token: new JwtSecurityTokenHandler().WriteToken(token), expiresIn * 60);
+        return (token: new JwtSecurityTokenHandler().WriteToken(token), _options.ExpiryMintes * 60);
     }
     public string? ValidateToken(string token)
     {
